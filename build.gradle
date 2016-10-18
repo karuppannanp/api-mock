@@ -11,26 +11,11 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
-apply plugin: 'com.google.cloud.tools.appengine'
 
 jar {
     baseName = 'gs-spring-boot'
     version =  '0.0.6'
 }
-
-appengine {
-	run {
-		port = 8080
-	}
-
-  	deploy {
-    	stopPreviousVersion = true
-    	promote = true
-  	}
-}
-
-group = 'com.example.appengine'
-version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -63,7 +48,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-
     compile("org.springframework.boot:spring-boot-starter-jetty")
     // end::jetty[]
 
