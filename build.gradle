@@ -48,7 +48,6 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-
     compile("org.springframework.boot:spring-boot-starter-jetty")
     // end::jetty[]
 
@@ -76,4 +75,7 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
 	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+	
+	// https://mvnrepository.com/artifact/com.google.appengine/gradle-appengine-plugin
+	compile group: 'com.google.appengine', name: 'gradle-appengine-plugin', version: '1.9.42'
 }
