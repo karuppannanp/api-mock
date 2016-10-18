@@ -11,11 +11,26 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
+apply plugin: 'com.google.cloud.tools.appengine'
 
 jar {
     baseName = 'gs-spring-boot'
     version =  '0.0.6'
 }
+
+appengine {
+	run {
+		port = 8080
+	}
+
+  	deploy {
+    	stopPreviousVersion = true
+    	promote = true
+  	}
+}
+
+group = 'com.example.appengine'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -76,4 +91,7 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
 	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
+	
+	// https://mvnrepository.com/artifact/com.google.appengine/gradle-appengine-plugin
+	compile group: 'com.google.appengine', name: 'gradle-appengine-plugin', version: '1.9.42'
 }
