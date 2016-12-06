@@ -6,6 +6,8 @@ package com.homedepot.pip.input;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author KXP8101
  *
@@ -19,10 +21,12 @@ public class ItemInput {
 	private String itemType;
 	private String availabilityType;
 	private String parentId;
-	private boolean appliance;
+	private Boolean appliance;
 
-	private boolean rebates;
-	private boolean superSku;
+	private Boolean rebates;
+	private Boolean superSku;
+	
+	private boolean modifyRealData;
 
 	private Info info;
 	private MediaInput media;
@@ -43,6 +47,9 @@ public class ItemInput {
 	}
 
 	public String getStoreId() {
+		if (StringUtils.isBlank(storeId)) {
+			storeId = "8119";
+		}
 		return storeId;
 	}
 
@@ -146,11 +153,11 @@ public class ItemInput {
 		this.storeSku = storeSku;
 	}
 
-	public boolean isRebates() {
+	public Boolean getRebates() {
 		return rebates;
 	}
 
-	public void setRebates(boolean rebates) {
+	public void setRebates(Boolean rebates) {
 		this.rebates = rebates;
 	}
 
@@ -158,15 +165,15 @@ public class ItemInput {
 		return superSku;
 	}
 
-	public void setSuperSku(boolean superSku) {
+	public void setSuperSku(Boolean superSku) {
 		this.superSku = superSku;
 	}
 
-	public boolean isAppliance() {
+	public Boolean getAppliance() {
 		return appliance;
 	}
 
-	public void setAppliance(boolean appliance) {
+	public void setAppliance(Boolean appliance) {
 		this.appliance = appliance;
 	}
 
@@ -184,5 +191,13 @@ public class ItemInput {
 
 	public void setAttributeGroupNames(List<String> attributeGroupNames) {
 		this.attributeGroupNames = attributeGroupNames;
+	}
+
+	public boolean isModifyRealData() {
+		return modifyRealData;
+	}
+
+	public void setModifyRealData(boolean modifyRealData) {
+		this.modifyRealData = modifyRealData;
 	}
 }

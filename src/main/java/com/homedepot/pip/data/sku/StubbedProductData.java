@@ -24,7 +24,7 @@ import com.homedepot.pip.enums.ItemType;
 import com.homedepot.pip.input.ItemInput;
 
 @Service
-public class StubbedProductInfoData {
+public class StubbedProductData {
 
 	@Autowired
 	private StubbedMedia stubbedMedia;
@@ -105,22 +105,22 @@ public class StubbedProductInfoData {
 		
 		// ITEM INFO
 		if (itemInput.getInfo() != null) {
-			item.setItemInfo(stubbedInfo.createItemInfo(itemInput.getInfo()));
+			item.setItemInfo(stubbedInfo.createItemInfo(itemInput));
 		} else {
 			item.setItemInfo(stubbedInfo.createDefaultItemInfo());
 		}
 
 		// ITEM MEDIA
 		if (itemInput.getMedia() != null) {
-			item.setItemMedia(stubbedMedia.createDefaultItemMediaTypeImage()); // TODO
+			item.setItemMedia(stubbedMedia.createItemMedia(itemInput.getMedia()));
 		} else {
-			item.setItemMedia(stubbedMedia.createDefaultItemMediaTypeImage());
+			item.setItemMedia(stubbedMedia.createDefaultItemMedia());
 		}
 
 		// ITEM AVAILABILITY
 		if (itemInput.getItemAvailability() != null) {
 			item.setItemAvailability(stubbedItemAvailability.createItemAvailability(itemInput.getItemAvailability(),
-					itemInput.getAvailabilityType(), itemInput.isAppliance()));
+					itemInput.getAvailabilityType(), itemInput.getAppliance()));
 		} else {
 			item.setItemAvailability(stubbedItemAvailability.createDefaultItemAvailability(itemInput.getAvailabilityType()));
 		}
@@ -149,13 +149,13 @@ public class StubbedProductInfoData {
 		item.setAttributeGroups(stubbedAttributeGroup.createDomainGroupList(itemInput));
 
 		// REBATES
-		item.setRebates(stubbedPromotion.createRebates(itemInput.isRebates()));
+		item.setRebates(stubbedPromotion.createRebates(itemInput.getRebates()));
 
 		// ITEM SHIPPING
 		if (itemInput.getShipping() != null) {
 			item.setItemShipping(stubbedShipping.createItemShipping(itemInput));
 		} else {
-			item.setItemShipping(stubbedShipping.createDefaultItemShipping(itemInput.isAppliance()));
+			item.setItemShipping(stubbedShipping.createDefaultItemShipping(itemInput.getAppliance()));
 		}
 
 		return item;
@@ -166,7 +166,7 @@ public class StubbedProductInfoData {
 
 		item.setItemInfo(stubbedInfo.createDefaultItemInfo());
 
-		item.setItemMedia(stubbedMedia.createDefaultItemMediaTypeImage());
+		item.setItemMedia(stubbedMedia.createDefaultItemMedia());
 
 		item.setItemAvailability(stubbedItemAvailability
 				.createDefaultItemAvailability(ItemAvailabilityType.SHARED));

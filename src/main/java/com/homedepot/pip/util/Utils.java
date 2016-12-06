@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
 
 public class Utils {
 	
@@ -31,5 +32,44 @@ public class Utils {
 	
 	public static String getCurrentTime() {
 		return TIME_DATE_FORMAT.format(new Date());
+	}
+	
+	public static int convertStringToPositiveIntIgnoreException(String value) {
+		int convertedValue = 0;
+		if (StringUtils.isNotBlank(value)) {
+			try {
+				convertedValue = Integer.parseInt(value);
+			} catch (Exception exception) {
+				return 0;
+			}
+		}
+		if (convertedValue < 0) {
+			convertedValue = -(convertedValue);
+		}
+		return convertedValue;
+	}
+	
+	public static LocalDate convertStringToLocalDate(String value) {
+		try {
+			return new LocalDate(value);
+		} catch (Exception exception) {
+		}
+		return null;
+	}
+	
+	public static Date convertStringToDate(String value) {
+		LocalDate localDate = convertStringToLocalDate(value);
+		if (localDate != null) {
+			return localDate.toDate();
+		}
+		return null;
+	}
+	
+	public static java.sql.Date convertStringToSqlDate(String value) {
+		LocalDate localDate = convertStringToLocalDate(value);
+		if (localDate != null) {
+			return (java.sql.Date) localDate.toDate();
+		}
+		return null;
 	}
 }

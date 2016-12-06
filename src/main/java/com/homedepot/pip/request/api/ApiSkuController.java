@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.homedepot.pip.backend.domain.Products;
 import com.homedepot.pip.cache.aisleBay.AisleBayCache;
+import com.homedepot.pip.cache.sku.ItemCache;
 import com.homedepot.pip.cache.store.StoreCache;
+import com.homedepot.pip.config.BeansConfig;
+import com.homedepot.pip.data.deserialization.DeserializationService;
 import com.homedepot.pip.data.overlay.StubbedStoreFiulfillment;
 import com.homedepot.pip.data.proxy.ProxyService;
-import com.homedepot.pip.data.sku.StubbedProductInfoData;
+import com.homedepot.pip.data.sku.ModifyProductData;
+import com.homedepot.pip.data.sku.StubbedProductData;
+import com.homedepot.pip.input.ItemInput;
 import com.homedepot.pip.request.validator.RequestValidator;
 import com.homedepot.pip.util.constant.Constants;
 
@@ -27,7 +30,13 @@ import com.homedepot.pip.util.constant.Constants;
 public class ApiSkuController {
 
 	@Autowired
-	private StubbedProductInfoData stubbedProductInfoData;
+	private StubbedProductData stubbedProductData;
+	
+	@Autowired
+	private ModifyProductData modifyProductData;
+	
+	@Autowired
+	private DeserializationService deserializationService;
 
 	@Autowired
 	private RequestValidator requestValidator;
@@ -37,6 +46,9 @@ public class ApiSkuController {
 	
 	@Autowired
 	private ProxyService proxyService;
+	
+	@Autowired
+	private AisleBayCache aisleBayCache;
 
 	@RequestMapping("test")
 	public String index() {
@@ -47,7 +59,8 @@ public class ApiSkuController {
 	@RequestMapping(value = "products/sku", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
 	public String getSku(HttpServletResponse res,
 			@RequestParam(value = "itemId") String itemId,
-			@RequestParam(value = "storeId") String storeId, @RequestParam(value = "key") String key,
+			@RequestParam(value = "storeId") String storeId,
+			@RequestParam(value = "key") String key,
 			@RequestParam(value = "additionalAttributeGrp", required = false) String additionalAttributeGrp,
 			@RequestParam(value = "show", required = false) String show) throws Exception {
 		System.out.println("products/sku");
@@ -64,12 +77,16 @@ public class ApiSkuController {
 				return "<error>Product Not Found</error>";
 			}
 		} else {
+			ItemInput itemInput = ItemCache.getItemFromCache(itemId);
+			Products products = null;
+			if (itemInput.isModifyRealData() && Constants.IS_PROXY_ENABLED) {
+				products = deserializationService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
+				products = modifyProductData.modifyProductsFromItemCache(itemInput, products);
+			} else {
+				products = stubbedProductData.createProducts(itemId, storeId);
+			}
 			try {
-				XmlMapper xmlMapper = new XmlMapper();
-				xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-				xmlMapper.setSerializationInclusion(Include.NON_NULL);
-				xmlMapper.setSerializationInclusion(Include.NON_EMPTY);
-				return xmlMapper.writeValueAsString(stubbedProductInfoData.createProducts(itemId, storeId));
+				return BeansConfig.getXmlMapper().writeValueAsString(products);
 			} catch (Exception exception) {
 				System.out.println(exception);
 				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -94,7 +111,7 @@ public class ApiSkuController {
 			return "<error>Input parameters are not valid</error>";
 		}
 
-		if (!AisleBayCache.checkAisleBayInCache(storeSkuId, storeId)) {
+		if (!aisleBayCache.checkAisleBayInCache(storeSkuId, storeId)) {
 			if (Constants.IS_PROXY_ENABLED) {
 				response = proxyService.aisleBayService(storeSkuId, storeId, key);
 				if (StringUtils.isNotBlank(callback)) {
@@ -105,7 +122,7 @@ public class ApiSkuController {
 				response = "{\"error\":\"Sku or sku-storeId combination not found\"}";
 			}
 		} else {
-			response = AisleBayCache.getAisleBayJson(storeId, storeSkuId);
+			response = aisleBayCache.getAisleBayJson(storeId, storeSkuId);
 			if (StringUtils.isNotBlank(callback)) {
 				response = callback + "(" + response + ")";
 			}

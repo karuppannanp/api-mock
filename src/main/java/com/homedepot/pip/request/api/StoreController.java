@@ -22,6 +22,9 @@ public class StoreController {
 
 	@Autowired
 	RequestValidator requestValidator;
+	
+	@Autowired
+	private StoreCache storeCache;
 
 	@RequestMapping(value = "flags/change", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String createSku(HttpServletResponse res,
@@ -36,12 +39,12 @@ public class StoreController {
 			return BAD_REQUEST_JSON;
 		}
 
-		if (!StoreCache.checkStoreInCache(storeId)) {
+		if (!storeCache.checkStoreInCache(storeId)) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return NOT_FOUND_JSON;
 		}
 
-		StoreCache.updateStoreFlags(storeId, bopis, boss, bossMsg, bodfs);
+		storeCache.updateStoreFlags(storeId, bopis, boss, bossMsg, bodfs);
 		return SUCCESS_JSON;
 	}
 }

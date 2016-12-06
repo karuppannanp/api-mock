@@ -31,6 +31,7 @@ public class StubbedItemAvailability {
 		} else {
 			itemAvailability.setBackorderable(backorderable);
 			itemAvailability.setInventoryStatus(inventoryStatus);
+			//itemAvailability.setst);
 		}
 		itemAvailability.setBuyable(buyable);
 		itemAvailability.setDiscontinuedItem(discontinuedItem);
@@ -38,7 +39,7 @@ public class StubbedItemAvailability {
 		return itemAvailability;
 	}
 
-	public ItemAvailability createItemAvailability(ItemAvail itemAvail, String availabilityType, boolean appliance) {
+	public ItemAvailability createItemAvailability(ItemAvail itemAvail, String availabilityType, Boolean appliance) {
 		return createItemAvailability(itemAvail.isBuyable(), itemAvail.isInventoryStatus(), itemAvail.isBackorderable(),
 				itemAvail.isPublished(), itemAvail.isDiscontinued(), availabilityType, appliance);
 	}

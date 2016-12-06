@@ -1,16 +1,21 @@
 package com.homedepot.pip.backend.domain.item;
 
+import java.util.ArrayList;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.homedepot.pip.backend.domain.DomainGroup;
 import com.homedepot.pip.backend.domain.Rebates;
+import com.homedepot.pip.backend.domain.StoreSku;
 import com.homedepot.pip.backend.domain.relateditem.RelatedItemGroup;
 import com.homedepot.pip.backend.domain.relatedservice.RelatedServiceGroup;
-import com.homedepot.pip.backend.domain.StoreSku;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-
+@JsonPropertyOrder({ "productId", "itemId", "partNumber", "itemType", "availabilityType", "webUrl", "canonicalURL",
+		"protectionPlanSku", "itemInfo", "itemAvailability", "itemMedia", "storeSkus", "itemPromotion",
+		"attributeGroups", "itemDimensions", "itemShipping", "itemRating", "rebates" })
 public class Item {
 
 	private String itemId;

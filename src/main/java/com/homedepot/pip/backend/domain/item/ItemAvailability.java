@@ -1,7 +1,10 @@
 package com.homedepot.pip.backend.domain.item;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+@JsonPropertyOrder({ "buyable", "availableOnlineStore", "availableInStore", "inventoryStatus", "backorderable",
+		"published", "discontinuedItem" })
 public class ItemAvailability {
     private Boolean buyable;
     private Boolean availableOnlineStore;

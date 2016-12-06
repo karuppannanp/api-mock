@@ -16,15 +16,15 @@ public class StubbedShipping {
 
 	public ItemShipping createItemShipping(ItemInput itemInput) {
 		Shipping shipping = itemInput.getShipping();
-		ItemShipping itemShipping = createDefaultItemShipping(itemInput.isAppliance());
+		ItemShipping itemShipping = createDefaultItemShipping(itemInput.getAppliance());
 		
 		if (StringUtils.isNotBlank(shipping.getThreshold())) {
 			itemShipping.setFreeShippingThreshold(shipping.getThreshold());
 		}
 		
-		if (itemInput.isAppliance() && !ShippingType.isValidApplianceShippingType(shipping.getMessageNumber())) {
+		if (itemInput.getAppliance() && !ShippingType.isValidApplianceShippingType(shipping.getMessageNumber())) {
 			shipping.setMessageNumber(ShippingType.APPL_FREE);
-		} else if (!itemInput.isAppliance() && ShippingType.isValidApplianceShippingType(shipping.getMessageNumber())) {
+		} else if (!itemInput.getAppliance() && ShippingType.isValidApplianceShippingType(shipping.getMessageNumber())) {
 			shipping.setMessageNumber(ShippingType.FREE);			
 		}
 		

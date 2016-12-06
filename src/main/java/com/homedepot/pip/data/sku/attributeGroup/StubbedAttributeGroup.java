@@ -77,7 +77,7 @@ public class StubbedAttributeGroup extends AttributeGroupMappings {
 	
 	private void insertAnAttribute(Boolean bulletedAttr, String guid, String value,
 			ArrayList<DomainGroup> attributeGroups, String attrGroupType) {
-		insertAnAttribute(bulletedAttr, guid, GUID_TO_NAME_MAPPING.get(guid), value, attributeGroups, attrGroupType);
+		insertAnAttribute(bulletedAttr, guid, AttributeGroupMappings.getGuidToNameMappings().get(guid), value, attributeGroups, attrGroupType);
 	}
 	
 	@SuppressWarnings("unchecked")

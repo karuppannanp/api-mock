@@ -15,6 +15,7 @@ import com.homedepot.pip.data.sku.itemAvailability.StubbedItemAvailability;
 import com.homedepot.pip.data.sku.price.StubbedPrice;
 import com.homedepot.pip.data.sku.storeAvailability.StubbedStoreAvailability;
 import com.homedepot.pip.enums.ItemAvailabilityType;
+import com.homedepot.pip.enums.StoreStatusCode;
 import com.homedepot.pip.enums.StoreStatusType;
 import com.homedepot.pip.input.ItemInput;
 import com.homedepot.pip.input.Price;
@@ -47,7 +48,7 @@ public class StubbedStoreSku {
 		ItemAvailability itemAvailability = null;
 		if (itemInput != null && ItemCache.getItemAvailabilityFromCache(itemInput.getItemId()) != null) {
 			itemAvailability = stubbedItemAvailability.createItemAvailability(itemInput.getItemAvailability(),
-					itemInput.getAvailabilityType(), itemInput.isAppliance());
+					itemInput.getAvailabilityType(), itemInput.getAppliance());
 		} else {
 			itemAvailability = stubbedItemAvailability
 					.createDefaultItemAvailability(ItemAvailabilityType.SHARED);
@@ -55,7 +56,7 @@ public class StubbedStoreSku {
 
 		storeSku.setFulfillmentOptions(stubbedFulfillment.createDefaultFulfillmentOptions(storeId, itemAvailability));
 		storeSku.setStoreAvailability(stubbedStoreAvailability.createStoreAvailability(itemAvailability, storeId));
-		storeSku.setItemPrice(stubbedPrice.createDefaultStorePrice(itemInput.isAppliance()));
+		storeSku.setItemPrice(stubbedPrice.createDefaultStorePrice(itemInput.getAppliance()));
 		storeSkus.add(storeSku);
 		if (!StringUtils.equals("8119", storeId)) {
 			StoreSku storeSkuOnline = new StoreSku();
@@ -66,7 +67,7 @@ public class StubbedStoreSku {
 					stubbedFulfillment.createDefaultFulfillmentOptions("8119", itemAvailability));
 			storeSkuOnline
 					.setStoreAvailability(stubbedStoreAvailability.createStoreAvailability(itemAvailability, "8119"));
-			storeSkuOnline.setItemPrice(stubbedPrice.createDefaultOnlinePrice(itemInput.isAppliance()));
+			storeSkuOnline.setItemPrice(stubbedPrice.createDefaultOnlinePrice(itemInput.getAppliance()));
 			storeSkus.add(storeSkuOnline);
 
 		}
@@ -79,17 +80,21 @@ public class StubbedStoreSku {
 		storeSku.setStoreId(itemInput.getStoreId());
 		storeSku.setStoreStatus(true);
 		storeSku.setStoreStatusType(StoreStatusType.ACTIVE);
+		
+		int storeStatus = 0;
 
 		// Item Availability part
-		boolean appliance = itemInput.isAppliance();
+		boolean appliance = itemInput.getAppliance();
 		ItemAvailability itemAvailability = null;
 		if (ItemCache.getItemAvailabilityFromCache(itemInput.getItemId()) != null) {
 			itemAvailability = stubbedItemAvailability.createItemAvailability(itemInput.getItemAvailability(),
 					itemInput.getAvailabilityType(), appliance);
+			storeStatus = itemInput.getItemAvailability().getOnlineStatus();
 		} else {
 			itemAvailability = stubbedItemAvailability
 					.createDefaultItemAvailability(ItemAvailabilityType.SHARED);
 		}
+		setStoreStatus(storeSku, storeStatus);
 		
 		// Fulfillments part
 		storeSku.setFulfillmentOptions(stubbedFulfillment.createFulfillmentOptions(itemInput.getStoreSku(),
@@ -102,9 +107,9 @@ public class StubbedStoreSku {
 		// Price part
 		Price price = itemInput.getStoreSku().getPrice();
 		if (price != null) {
-			storeSku.setItemPrice(stubbedPrice.createPrice(price, itemInput.isAppliance()));
+			storeSku.setItemPrice(stubbedPrice.createPrice(price, itemInput.getAppliance()));
 		} else {
-			storeSku.setItemPrice(stubbedPrice.createDefaultStorePrice(itemInput.isAppliance()));
+			storeSku.setItemPrice(stubbedPrice.createDefaultStorePrice(itemInput.getAppliance()));
 		}
 		
 		// Inventory part
@@ -124,13 +129,22 @@ public class StubbedStoreSku {
 			storeSkuOnline.setStoreAvailability(
 					stubbedStoreAvailability.createStoreAvailability(itemAvailability, "8119"));
 			if (price != null) {
-				storeSkuOnline.setItemPrice(stubbedPrice.createPrice(price, itemInput.isAppliance()));
+				storeSkuOnline.setItemPrice(stubbedPrice.createPrice(price, itemInput.getAppliance()));
 			} else {
-				storeSkuOnline.setItemPrice(stubbedPrice.createDefaultOnlinePrice(itemInput.isAppliance()));
+				storeSkuOnline.setItemPrice(stubbedPrice.createDefaultOnlinePrice(itemInput.getAppliance()));
 			}
 			storeSkus.add(storeSkuOnline);
 
 		}
 		return storeSkus;
+	}
+	
+	private void setStoreStatus(StoreSku storeSku, int storeStatus) {
+		if (storeStatus >= 100 && storeStatus <= 400) {
+			storeSku.setStoreStatus(true);
+		} else {
+			storeSku.setStoreStatus(false);
+		}
+		storeSku.setStoreStatusType(StoreStatusType.valueOf(StoreStatusCode.valueOf("CODE_" + storeStatus).toString()));
 	}
 }

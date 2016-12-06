@@ -32,6 +32,9 @@ public class SkuCreationController {
 
 	@Autowired
 	CacheSkuCreator cacheSkuCreator;
+	
+	@Autowired
+	private AisleBayCache aisleBayCache;
 
 	@RequestMapping(value = "sku/create", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String createSku(HttpServletResponse res,
@@ -61,7 +64,8 @@ public class SkuCreationController {
 			@RequestParam(value = "inventoryStatus", defaultValue = "true") boolean inventoryStatus,
 			@RequestParam(value = "backorderable", required = false) boolean backorderable,
 			@RequestParam(value = "published", defaultValue = "true") boolean published,
-			@RequestParam(value = "backorderDate", required = false) String backorderDate) {
+			@RequestParam(value = "backorderDate", required = false) String backorderDate,
+			@RequestParam(value = "storeStatus", defaultValue = "100") int storeStatus) {
 		
 		if (!requestValidator.isItemIdValid(itemId)) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -73,8 +77,13 @@ public class SkuCreationController {
 			return NOT_FOUND_JSON;
 		}
 		
+		if (!requestValidator.isBackorderDateValid(backorderDate, backorderable)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "{\"error\":\"The backorder date should be in the format yyyy-MM-dd (2017-11-30).\"}";
+		}
+		
 		cacheSkuCreator.createItemAvailability(itemId, buyable, inventoryStatus, backorderable, published, discontinued,
-				backorderDate);
+				backorderDate, storeStatus);
 		return SUCCESS_JSON;
 	}
 
@@ -102,7 +111,8 @@ public class SkuCreationController {
 
 	@RequestMapping(value = "sku/create/rating", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String createRatings(HttpServletResponse res,
-			@RequestParam(value = "itemId") String itemId, @RequestParam(value = "rating") String rating,
+			@RequestParam(value = "itemId") String itemId,
+			@RequestParam(value = "rating") String rating,
 			@RequestParam(value = "count") String count) {
 
 		if (!requestValidator.isRatingsParameterValid(itemId, rating, count)) {
@@ -119,8 +129,9 @@ public class SkuCreationController {
 	}
 
 	@RequestMapping(value = "sku/create/rebate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public String createShipping(HttpServletResponse res, @RequestParam(value = "itemId") String itemId,
-			@RequestParam(value = "rebate") boolean rebate) {
+	public String createRebate(HttpServletResponse res,
+			@RequestParam(value = "itemId") String itemId,
+			@RequestParam(value = "rebate") Boolean rebate) {
 		
 		if (!requestValidator.isItemIdValid(itemId)) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -242,6 +253,11 @@ public class SkuCreationController {
 			return "{\"error\":\"Dynamic ETA parameters are not valid.\"}";
 		}
 		
+		if (!requestValidator.isShippingDatesValid(sthStartDate, sthEndDate, bossStartDate, bossEndDate)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "{\"error\":\"The STH/BOSS dates should be in the format yyyy-MM-dd (2017-11-30).\"}";
+		}
+		
 		cacheSkuCreator.createShipping(itemId, messageNumber, sthStartDate, sthEndDate, bossStartDate, bossEndDate,
 				dynamicEta, timeLeftHrs, timeLeftMins, threshold, excludedShipStates);
 		return SUCCESS_JSON;
@@ -250,11 +266,11 @@ public class SkuCreationController {
 	@RequestMapping(value = "sku/create/fulfillment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String createFulfillment(HttpServletResponse res,
 			@RequestParam(value = "itemId") String itemId,
-			@RequestParam(value = "sthStatus", defaultValue = "false") boolean sthStatus,
-			@RequestParam(value = "bopisStatus", defaultValue = "false") boolean bopisStatus,
+			@RequestParam(value = "sth", defaultValue = "false") boolean sthStatus,
+			@RequestParam(value = "bopis", defaultValue = "false") boolean bopisStatus,
 			@RequestParam(value = "bopisCheckNearby", defaultValue = "false") boolean bopisCheckNearby,
-			@RequestParam(value = "bossStatus", defaultValue = "false") boolean bossStatus,
-			@RequestParam(value = "bodfsStatus", defaultValue = "false") boolean bodfsStatus,
+			@RequestParam(value = "boss", defaultValue = "false") boolean bossStatus,
+			@RequestParam(value = "bodfs", defaultValue = "false") boolean bodfsStatus,
 			@RequestParam(value = "bodfsCharge", required = false) String bodfsCharge,
 			@RequestParam(value = "alphaPrompt", required = false) String alphaPrompt) {
 		
@@ -298,11 +314,21 @@ public class SkuCreationController {
 			@RequestParam(value = "specialPrice", required = false) Double specialPrice,
 			@RequestParam(value = "specialBuyPrice", required = false) Double specialBuyPrice,
 			@RequestParam(value = "mapAboveOriginalPrice", required = false) Boolean mapAboveOriginalPrice,
-			@RequestParam(value = "alternatePriceDisplay", defaultValue = "true") boolean alternatePriceDisplay,
+			@RequestParam(value = "alternatePriceDisplay", defaultValue = "false") boolean alternatePriceDisplay,
 			@RequestParam(value = "unitsPerCase", required = false) String unitsPerCase,
 			@RequestParam(value = "caseUnitUom", required = false) String caseUnitUom,
 			@RequestParam(value = "bulkPrice", required = false) Double bulkPrice,
 			@RequestParam(value = "bulkPriceThresholdQty", required = false) Double bulkPriceThresholdQty) {
+
+		if (!requestValidator.isItemIdValid(itemId)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return BAD_REQUEST_JSON;
+		}
+
+		if (!requestValidator.isItemInCache(itemId)) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return NOT_FOUND_JSON;
+		}
 		
 		Price price = new Price();
 		price.setUom(uom);
@@ -334,17 +360,42 @@ public class SkuCreationController {
 		return SUCCESS_JSON;
 	}
 
-	@RequestMapping(value = "sku/delete/attribute", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "sku/delete/attributeGroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String deleteAttributeGroup(HttpServletResponse res,
 			@RequestParam(value = "itemId") String itemId,
 			@RequestParam(value = "groupName") String groupName) {
+
+		if (!requestValidator.isItemIdValid(itemId)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return BAD_REQUEST_JSON;
+		}
+
+		if (!requestValidator.isItemInCache(itemId)) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return NOT_FOUND_JSON;
+		}
 		
 		cacheSkuCreator.deleteAttributeGroupByName(itemId, groupName);
 		return SUCCESS_JSON;
 	}
 
 	@RequestMapping(value = "sku/create/media", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public String createMedia() {
+	public String createMedia(HttpServletResponse res,
+			@RequestParam(value = "itemId") String itemId,
+			@RequestParam(value = "noOfVideos", defaultValue = "-1") int noOfVideos,
+			@RequestParam(value = "noOfImages", defaultValue = "-1") int noOfImages) {
+
+		if (!requestValidator.isItemIdValid(itemId)) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return BAD_REQUEST_JSON;
+		}
+
+		if (!requestValidator.isItemInCache(itemId)) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return NOT_FOUND_JSON;
+		}
+		
+		cacheSkuCreator.createMedia(itemId, noOfVideos, noOfImages);
 		return SUCCESS_JSON;
 	}
 
@@ -359,7 +410,7 @@ public class SkuCreationController {
 		if (!requestValidator.isStoreIdValid(storeId) || !requestValidator.isStoreSkuIdValid(storeSkuId)) {
 			return BAD_REQUEST_JSON;
 		}
-		AisleBayCache.putAisleBayIntoCache(storeId, storeSkuId, aisle, bay, locationDesc);
+		aisleBayCache.putAisleBayIntoCache(storeId, storeSkuId, aisle, bay, locationDesc);
 		return SUCCESS_JSON;
 	}
 

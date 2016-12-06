@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.homedepot.pip.config.BeansConfig;
 import com.homedepot.pip.data.store.flags.Store;
 import com.homedepot.pip.data.store.flags.Stores;
 
@@ -19,7 +19,10 @@ import com.homedepot.pip.data.store.flags.Stores;
  * @author KXP8101
  *
  */
+
+@Component
 public class StoreCache {
+
 	private static Map<String, Store> STORE_CHACHE = new HashMap<>();
 	private static Map<String, String> STORE_OVERLAY_CACHE = new HashMap<>();
 
@@ -38,13 +41,10 @@ public class StoreCache {
 	 * @throws JAXBException
 	 */
 	private static Stores parseStoresXmlResponse(String storesXmlResponse) throws Exception {
-		XmlMapper xmlMapper = new XmlMapper();
-		xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		xmlMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
-		return xmlMapper.readValue(storesXmlResponse, Stores.class);
+		return BeansConfig.getXmlMapper().readValue(storesXmlResponse, Stores.class);
 	}
 
-	public static boolean checkStoreInCache(String storeId) {
+	public boolean checkStoreInCache(String storeId) {
 		return STORE_CHACHE.containsKey(storeId);
 	}
 
@@ -56,7 +56,7 @@ public class StoreCache {
 		STORE_CHACHE.put(store.getStoreId(), store);
 	}
 
-	public static boolean checkBopis(String storeId) {
+	public boolean checkBopis(String storeId) {
 		String bopis = null;
 		if (checkStoreInCache(storeId)) {
 			bopis = getStoreFromCache(storeId).getBopis();
@@ -65,7 +65,7 @@ public class StoreCache {
 		return false;
 	}
 
-	public static boolean checkBoss(String storeId) {
+	public boolean checkBoss(String storeId) {
 		String boss = null;
 		if (checkStoreInCache(storeId)) {
 			boss = getStoreFromCache(storeId).getBoss();
@@ -74,7 +74,7 @@ public class StoreCache {
 		return false;
 	}
 
-	public static boolean checkBossMsg(String storeId) {
+	public boolean checkBossMsg(String storeId) {
 		String bossMsg = null;
 		if (checkStoreInCache(storeId)) {
 			bossMsg = getStoreFromCache(storeId).getBossMsg();
@@ -83,7 +83,7 @@ public class StoreCache {
 		return false;
 	}
 
-	public static boolean checkBodfs(String storeId) {
+	public boolean checkBodfs(String storeId) {
 		String bodfs = null;
 		if (checkStoreInCache(storeId)) {
 			bodfs = getStoreFromCache(storeId).getBodfs();
@@ -92,7 +92,7 @@ public class StoreCache {
 		return false;
 	}
 
-	public static String getCity(String storeId) {
+	public String getCity(String storeId) {
 		String city = null;
 		if (checkStoreInCache(storeId)) {
 			city = getStoreFromCache(storeId).getCity();
@@ -100,7 +100,7 @@ public class StoreCache {
 		return city;
 	}
 
-	public static String getZipCode(String storeId) {
+	public String getZipCode(String storeId) {
 		String zipCode = null;
 		if (checkStoreInCache(storeId)) {
 			zipCode = getStoreFromCache(storeId).getZipCode();
@@ -108,7 +108,7 @@ public class StoreCache {
 		return zipCode;
 	}
 
-	public static void updateStoreFlags(String storeId, Boolean bopis, Boolean boss, Boolean bossMsg, Boolean bodfs) {
+	public void updateStoreFlags(String storeId, Boolean bopis, Boolean boss, Boolean bossMsg, Boolean bodfs) {
 		Store store = getStoreFromCache(storeId);
 		if (bopis != null && bopis) {
 			store.setBopis("Y");

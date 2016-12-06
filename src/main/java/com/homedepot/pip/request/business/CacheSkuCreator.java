@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.homedepot.pip.cache.sku.ItemCache;
+import com.homedepot.pip.data.proxy.ProxyService;
 import com.homedepot.pip.enums.ItemAvailabilityType;
 import com.homedepot.pip.enums.ItemType;
 import com.homedepot.pip.input.Attribute;
@@ -16,23 +18,32 @@ import com.homedepot.pip.input.Fulfillment;
 import com.homedepot.pip.input.Info;
 import com.homedepot.pip.input.ItemAvail;
 import com.homedepot.pip.input.ItemInput;
+import com.homedepot.pip.input.MediaInput;
 import com.homedepot.pip.input.Price;
 import com.homedepot.pip.input.PromoInput;
 import com.homedepot.pip.input.Rating;
 import com.homedepot.pip.input.Shipping;
 import com.homedepot.pip.input.StoreSkuInput;
+import com.homedepot.pip.util.Utils;
 
 @Component
 public class CacheSkuCreator {
+
+	@Autowired
+	private ProxyService proxyService;
 	
 	public void createItemAvailability(String itemId, boolean buyable, boolean inventoryStatus, boolean backorderable,
-			boolean published, boolean discontinued, String backorderDate) {
+			boolean published, boolean discontinued, String backorderDate, int storeStatus) {
 		ItemAvail itemAvailability = new ItemAvail();
 		itemAvailability.setBuyable(buyable);
 		itemAvailability.setInventoryStatus(inventoryStatus);
 		itemAvailability.setBackorderable(backorderable);
+		if (backorderable) {
+			itemAvailability.setBackorderDate(backorderDate);
+		}
 		itemAvailability.setPublished(published);
 		itemAvailability.setDiscontinued(discontinued);
+		itemAvailability.setStoreStatus(storeStatus);
 		ItemCache.setItemAvailabilityToItemCache(itemId, itemAvailability);
 	}
 	
@@ -62,6 +73,28 @@ public class CacheSkuCreator {
 		ItemCache.setAttrGroupsToItemCache(itemId, attrGroups);
 	}
 	
+	public void createMedia(String itemId, int noOfVideos, int noOfImages) {
+		MediaInput media = ItemCache.getMediaFromCache(itemId);
+		
+		if (noOfVideos < 0 && noOfImages < 0) {
+			return;
+		}
+		
+		if (media == null) {
+			media = new MediaInput();
+		}
+		
+		if (noOfVideos > -1) {
+			media.setNoOfVideos(noOfVideos);
+		}
+		
+		if (noOfImages > -1) {
+			media.setNoOfImages(noOfImages);
+		}
+		
+		ItemCache.setMediaIntoCache(itemId, media);
+	}
+
 	public void deleteAttributeGroupByName(String itemId, String groupName) {
 		List<String> attrGroupNames = ItemCache.getAttributeGroupNamesFromCache(itemId);
 		
@@ -116,11 +149,19 @@ public class CacheSkuCreator {
 			String threshold, String excludedShipStates) {
 		Shipping shipping = new Shipping();
 		shipping.setMessageNumber(messageNumber);
-		// TODO
-		/*shipping.setSthStartDate(sthStartDate);
-		shipping.setSthEndDate(sthEndDate);
-		shipping.setBossStartDate(bossStartDate);
-		shipping.setBossEndDate(bossEndDate);*/
+		
+		shipping.setSthStartDate(Utils.convertStringToSqlDate(sthStartDate));
+		if (StringUtils.isBlank(sthEndDate) && StringUtils.isNotBlank(sthStartDate)) {
+			sthEndDate = sthStartDate;
+		}
+		shipping.setSthEndDate(Utils.convertStringToSqlDate(sthEndDate));
+		
+		shipping.setBossStartDate(Utils.convertStringToSqlDate(bossStartDate));
+		if (StringUtils.isBlank(bossEndDate) && StringUtils.isNotBlank(bossStartDate)) {
+			bossEndDate = bossStartDate;
+		}
+		shipping.setBossEndDate(Utils.convertStringToSqlDate(bossEndDate));
+		
 		shipping.setDynamicEta(dynamicEta);
 		shipping.setTimeLeftHrs(timeLeftHrs);
 		shipping.setTimeLeftMins(timeLeftMins);
@@ -181,6 +222,9 @@ public class CacheSkuCreator {
 		basicItem.setItemType(itemType);
 		basicItem.setAvailabilityType(availabilityType);
 		basicItem.setParentId(parentId);
+		
+		basicItem.setModifyRealData(proxyService.checkSkuInProductApi(itemId));
+
 		ItemCache.keepItemInCache(basicItem);
 	}
 }
