@@ -34,8 +34,8 @@ appengine {
 group = 'com.example.appengine'   // Generated output GroupId
 version = '1.0-SNAPSHOT' 
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
