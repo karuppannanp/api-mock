@@ -1,9 +1,10 @@
 package com.homedepot.pip.backend.domain.item;
 
-import com.homedepot.pip.backend.domain.Media;
-
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.ArrayList;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.homedepot.pip.backend.domain.Media;
 
 public class ItemMedia {
 
@@ -24,6 +25,7 @@ public class ItemMedia {
     }
 
     @JacksonXmlProperty(localName = "mediaEntry")
+	@JacksonXmlElementWrapper(useWrapping = false)
     public void setMediaList(ArrayList<Media> mediaList) {
         this.mediaList = mediaList;
     }

@@ -2,8 +2,14 @@ package com.homedepot.pip.backend.domain.item;
 
 import org.joda.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
+
+@JsonPropertyOrder({ "productDescription", "productTitle", "brandName", "label", "modelNumber", "upcCode",
+		"vendorNumber", "storeSkuNumber", "shipType", "productClass", "productSubClass", "productDepartment",
+		"backorderFlag", "genericBrandFlag", "appliance", "showProduct", "bopisEligible", "bossEligible", "topSeller",
+		"showLocalPrice", "savingsCenter", "sureFit", "hasIrgItems", "hasFbtItems", "hasFbrItems", "hidePrice" })
 public class ItemInfo {
 
     private String productDescription;
@@ -14,6 +20,7 @@ public class ItemInfo {
     private String vendorNumber;
     private String upcCode;
     private String productSubClass;
+    private String productDepartment;
     private String qtyLimit;
     private int shipType;
     private String primaryCategoryId;
@@ -317,4 +324,12 @@ public class ItemInfo {
     public void setProductClass(String productClass) {
         this.productClass = productClass;
     }
+
+	public String getProductDepartment() {
+		return productDepartment;
+	}
+
+	public void setProductDepartment(String productDepartment) {
+		this.productDepartment = productDepartment;
+	}
 }

@@ -20,6 +20,9 @@ public class StubbedFulfillment {
 
 	@Autowired
 	StubbedItemAvailability stubbedItemAvailability;
+	
+	@Autowired
+	private StoreCache storeCache;
 
 	public FulfillmentOptions createDefaultFulfillmentOptions(String storeId, ItemAvailability itemAvailability) {
 		FulfillmentOptions fmOptions = new FulfillmentOptions();
@@ -71,11 +74,11 @@ public class StubbedFulfillment {
 	public BOPISFulfillmentOption createBopisFulfillmentOption(boolean eligibilityStatus, boolean checkStoreLink,
 			String alphaPromptRestriction, String storeId) {
 		BOPISFulfillmentOption bopisOption = null;
-		if (StoreCache.checkStoreInCache(storeId)) {
+		if (storeCache.checkStoreInCache(storeId)) {
 			bopisOption = new BOPISFulfillmentOption();
 			bopisOption.setAlphaPromptRestriction(alphaPromptRestriction);
 			bopisOption.setCheckStoreLink(checkStoreLink);
-			if (StoreCache.checkBopis(storeId)) {
+			if (storeCache.checkBopis(storeId)) {
 				bopisOption.setEligibilityStatus(eligibilityStatus);
 			}
 		}
@@ -91,7 +94,7 @@ public class StubbedFulfillment {
 	public BODFSFulfillmentOption createBodfsFulfillmentOption(String estDeliveryCharge, String alphaPromptRestriction,
 			String storeId) {
 		BODFSFulfillmentOption bodfsOption = null;
-		if (StoreCache.checkBodfs(storeId)) {
+		if (storeCache.checkBodfs(storeId)) {
 			bodfsOption = new BODFSFulfillmentOption();
 			bodfsOption.setAlphaPromptRestriction(alphaPromptRestriction);
 			bodfsOption.setEligibilityStatus(true);
@@ -105,7 +108,7 @@ public class StubbedFulfillment {
 
 	public BOSSFulfillmentOption createBossOption(String storeId) {
 		BOSSFulfillmentOption bossOption = null;
-		if (StoreCache.checkBoss(storeId)) {
+		if (storeCache.checkBoss(storeId)) {
 			bossOption = new BOSSFulfillmentOption();
 			bossOption.setEligibilityStatus(true);
 		}

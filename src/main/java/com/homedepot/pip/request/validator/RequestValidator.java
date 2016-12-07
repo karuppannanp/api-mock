@@ -4,6 +4,8 @@
 package com.homedepot.pip.request.validator;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.homedepot.pip.cache.sku.ItemCache;
@@ -17,6 +19,9 @@ import com.homedepot.pip.util.Utils;
 
 @Component
 public class RequestValidator {
+
+	@Autowired
+	private StoreCache storeCache;
 
 	public boolean isItemInCache(String itemId) {
 		return ItemCache.checkItemInCache(itemId);
@@ -36,7 +41,7 @@ public class RequestValidator {
 	}
 	
 	public boolean isStoreIdValid(String storeId) {
-		return StoreCache.checkStoreInCache(storeId);
+		return storeCache.checkStoreInCache(storeId);
 	}
 	
 	public boolean isItemMerchandise(String itemId) {
@@ -80,6 +85,46 @@ public class RequestValidator {
 				return false;
 			}
 			if (hours < 0 || mins < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isBackorderDateValid(String backorderDate, boolean backorderable) {
+		if (backorderable) {
+			LocalDate boDate = Utils.convertStringToLocalDate(backorderDate);
+			if (boDate == null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isShippingDatesValid(String sthStartDate, String sthEndDate, String bossStartDate,
+			String bossEndDate) {
+		LocalDate convertedLocalDate = null;
+		if (StringUtils.isNotBlank(sthStartDate)) {
+			convertedLocalDate = Utils.convertStringToLocalDate(sthStartDate);
+			if (convertedLocalDate == null) {
+				return false;
+			}
+		}
+		if (StringUtils.isNotBlank(sthEndDate)) {
+			convertedLocalDate = Utils.convertStringToLocalDate(sthEndDate);
+			if (convertedLocalDate == null) {
+				return false;
+			}
+		}
+		if (StringUtils.isNotBlank(bossStartDate)) {
+			convertedLocalDate = Utils.convertStringToLocalDate(bossStartDate);
+			if (convertedLocalDate == null) {
+				return false;
+			}
+		}
+		if (StringUtils.isNotBlank(bossEndDate)) {
+			convertedLocalDate = Utils.convertStringToLocalDate(bossEndDate);
+			if (convertedLocalDate == null) {
 				return false;
 			}
 		}

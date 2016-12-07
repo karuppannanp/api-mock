@@ -53,9 +53,9 @@ public class StubbedPromotion {
         return createRebates(false);
 	}
 	
-	public Rebates createRebates(boolean hasEcoRebates) {
+	public Rebates createRebates(Boolean hasEcoRebates) {
 		Rebates rebates = new Rebates();
-        rebates.setHasEcoRebates(hasEcoRebates);
+        rebates.setHasEcoRebates(hasEcoRebates != null && hasEcoRebates);
         return rebates;
 	}
 }

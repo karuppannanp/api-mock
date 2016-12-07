@@ -15,8 +15,8 @@ public class ItemAvail {
 	private boolean published = true;
 	private boolean discontinued;
 	private String backorderDate;
-	private String storeStatus = "NA";
-	private String onlineStatus = "NA";
+	private int storeStatus = 0;
+	private int onlineStatus = 0;
 
 	public String getBackorderDate() {
 		return backorderDate;
@@ -66,19 +66,19 @@ public class ItemAvail {
 		this.discontinued = discontinued;
 	}
 
-	public String getStoreStatus() {
+	public int getStoreStatus() {
 		return storeStatus;
 	}
 
-	public void setStoreStatus(String storeStatus) {
+	public void setStoreStatus(int storeStatus) {
 		this.storeStatus = storeStatus;
 	}
 
-	public String getOnlineStatus() {
+	public int getOnlineStatus() {
 		return onlineStatus;
 	}
 
-	public void setOnlineStatus(String onlineStatus) {
+	public void setOnlineStatus(int onlineStatus) {
 		this.onlineStatus = onlineStatus;
 	}
 }

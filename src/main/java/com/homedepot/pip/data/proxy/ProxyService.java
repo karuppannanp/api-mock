@@ -50,4 +50,15 @@ public class ProxyService {
 				+ "/storefulfillment?type=json&key=" + key;
 		return Connection.INSTANCE.makeRequest(url);
 	}
+
+	public boolean checkSkuInProductApi(String itemId) {
+		try {
+			String url = "http://" + Constants.ENV_DEPENEDENT_API_HOST + "/ProductAPI/v2/products/sku?itemId=" + itemId
+					+ "&show=info" + "&key=tRXWvUBGuAwEzFHScjLw9ktZ0Bw7a335";
+			Connection.INSTANCE.makeRequest(url);
+		} catch (Exception exception) {
+			return false;
+		}
+		return true;
+	}
 }

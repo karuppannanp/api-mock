@@ -1,6 +1,10 @@
 package com.homedepot.pip.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
+@JsonPropertyOrder({ "mediaType", "location", "height", "width", "videoId", "thumbnail", "video", "title",
+		"shortDescription", "longDescription", "videoStill" })
 
 public class Media  {
 

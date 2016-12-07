@@ -1,13 +1,16 @@
 package com.homedepot.pip.backend.domain;
 
 import com.homedepot.pip.backend.domain.item.Item;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import java.util.ArrayList;
 
+@JsonPropertyOrder({ "productId", "superSku", "defaultItemId", "items" })
 
 public class Product {
+
     private String productId;
     private Boolean superSku;
     private String defaultItemId;

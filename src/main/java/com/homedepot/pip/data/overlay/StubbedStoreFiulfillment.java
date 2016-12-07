@@ -6,9 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.homedepot.pip.backend.store.fulfillment.AlternateStores;
 import com.homedepot.pip.backend.store.fulfillment.AvailabilityMessage;
 import com.homedepot.pip.backend.store.fulfillment.AvailabilityMessages;
@@ -25,6 +22,7 @@ import com.homedepot.pip.backend.store.fulfillment.StoreFulfillment;
 import com.homedepot.pip.backend.store.fulfillment.StoreFulfillmentDetails;
 import com.homedepot.pip.backend.store.fulfillment.StoreSearchResponse;
 import com.homedepot.pip.cache.store.StoreCache;
+import com.homedepot.pip.config.BeansConfig;
 import com.homedepot.pip.util.Utils;
 import com.homedepot.pip.util.http.Connection;
 
@@ -32,9 +30,7 @@ import com.homedepot.pip.util.http.Connection;
 public class StubbedStoreFiulfillment {
 
 	public String getStoreFulfillment(String itemId, String storeId) throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.setSerializationInclusion(Include.NON_NULL);
-		return objectMapper.writeValueAsString(storeFulfillmentResponse(itemId, storeId));
+		return BeansConfig.getObjectMapper().writeValueAsString(storeFulfillmentResponse(itemId, storeId));
 	}
 
 	private StoreFulfillment storeFulfillmentResponse(String itemId, String storeId) throws Exception {
@@ -277,11 +273,8 @@ public class StubbedStoreFiulfillment {
 		return Connection.INSTANCE.makeRequest(storeSearchServicesUrl);
 	}
 
-	private static StoreSearchResponse getStoresBySearch(String searchVal) throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
-		return objectMapper.readValue(makeStoreSearchCall(searchVal), StoreSearchResponse.class);
+	private StoreSearchResponse getStoresBySearch(String searchVal) throws Exception {
+		return BeansConfig.getObjectMapper().readValue(makeStoreSearchCall(searchVal), StoreSearchResponse.class);
 	}
 	
 	private boolean checkBopisEligibility(String value) {

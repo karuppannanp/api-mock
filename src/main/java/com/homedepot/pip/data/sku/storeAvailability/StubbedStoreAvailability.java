@@ -16,6 +16,9 @@ public class StubbedStoreAvailability {
 
 	@Autowired
 	StubbedItemAvailability stubbedItemAvailability;
+	
+	@Autowired
+	private StoreCache storeCache;
 
 	public StoreAvailability createStoreAvailability(ItemAvailability itemAvailability, String storeId) {
 		StoreAvailability storeAvailability = new StoreAvailability();
@@ -46,13 +49,13 @@ public class StubbedStoreAvailability {
 	}
 	
 	private void setStoreFlags(StoreAvailability storeAvailability, String storeId) {
-		if (StoreCache.checkBopis(storeId)) {
+		if (storeCache.checkBopis(storeId)) {
 			storeAvailability.setBopisElgStore(true);
 		}
-		if (StoreCache.checkBoss(storeId)) {
+		if (storeCache.checkBoss(storeId)) {
 			storeAvailability.setBossElgStore(true);
 		}
-		if (StoreCache.checkBossMsg(storeId)) {
+		if (storeCache.checkBossMsg(storeId)) {
 			storeAvailability.setBossMsgElgStore(true);
 		}
 	}

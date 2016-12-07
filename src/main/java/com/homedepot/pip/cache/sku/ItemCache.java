@@ -55,6 +55,12 @@ public class ItemCache {
 		return null;
 	}
 
+	public static void setMediaIntoCache(String itemId, MediaInput media) {
+		if (checkItemInCache(itemId)) {
+			getItemFromCache(itemId).setMedia(media);
+		}
+	}
+
 	public static Rating getRatingFromCache(String itemId) {
 		if (checkItemInCache(itemId) && getItemFromCache(itemId).getRating() != null) {
 			return getItemFromCache(itemId).getRating();
@@ -150,6 +156,6 @@ public class ItemCache {
 	}
 
 	public static boolean isMerchandiseItem(String itemId) {
-		return !getItemFromCache(itemId).isAppliance();
+		return !getItemFromCache(itemId).getAppliance();
 	}
 }
