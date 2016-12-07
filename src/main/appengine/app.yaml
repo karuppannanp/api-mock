@@ -6,9 +6,5 @@ handlers:
   script: this field is required, but ignored
   secure: always  # Require HTTPS
 
-runtime_config:  # Optional
-  jdk: openjdk7
-  server: jetty9
-
 manual_scaling:
   instances: 1
