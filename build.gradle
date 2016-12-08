@@ -6,15 +6,16 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
         classpath("com.google.cloud.tools:appengine-gradle-plugin:+")
+        classpath("com.bmuschko:gradle-tomcat-plugin:2.2.4")
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'com.google.cloud.tools.appengine'
+apply plugin: "com.bmuschko.tomcat"
 
 repositories {
 	maven {
@@ -31,7 +32,7 @@ appengine {
   	}
 }
 
-group = 'com.example.appengine'   // Generated output GroupId
+group = 'com.example.appengine'
 version = '1.0-SNAPSHOT' 
 
 sourceCompatibility = 1.7
@@ -54,16 +55,25 @@ dependencies {
 	
 	// https://mvnrepository.com/artifact/org.springframework/spring-web
 	compile group: 'org.springframework', name: 'spring-web', version: '4.3.3.RELEASE'
-    
-	compile("org.apache.tomcat.embed:tomcat-embed-jasper")
 	
-    // tag::jetty[]
-    compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-    // end::jetty[]
+	// https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.3.RELEASE'
+	    
+	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-core
+	compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '7.0.72'
 
+	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-jasper
+	compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '7.0.72'
+	
+	// https://mvnrepository.com/artifact/org.apache.tomcat.embed/tomcat-embed-logging-juli
+	compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-logging-juli', version: '7.0.72'
+		
+	// https://mvnrepository.com/artifact/com.bmuschko/gradle-tomcat-plugin
+	compile group: 'com.bmuschko', name: 'gradle-tomcat-plugin', version: '2.2.4'
+	
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '1.4.0.RELEASE'
+	
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
