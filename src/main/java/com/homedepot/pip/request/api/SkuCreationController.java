@@ -34,6 +34,9 @@ public class SkuCreationController {
 	CacheSkuCreator cacheSkuCreator;
 	
 	@Autowired
+	private StoreCache storeCache;
+	
+	@Autowired
 	private AisleBayCache aisleBayCache;
 
 	@RequestMapping(value = "sku/create", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -446,7 +449,7 @@ public class SkuCreationController {
 			value += "~~~~" + nearby;
 		}
 		
-		StoreCache.putOverlayStoreIntoCache(itemId, storeId, value.toLowerCase());
+		storeCache.putOverlayStoreIntoCache(itemId, storeId, value.toLowerCase());
 		return SUCCESS_JSON;
 	}
 }

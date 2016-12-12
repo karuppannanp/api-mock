@@ -8,11 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-public enum Connection {
-
-	INSTANCE;
+@Component
+public class Connection {
 
 	private RestTemplate restTemplate;
 	private PoolingHttpClientConnectionManager connectionManager;

@@ -3,17 +3,21 @@
  */
 package com.homedepot.pip.cache.store;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.homedepot.pip.config.BeansConfig;
 import com.homedepot.pip.data.store.flags.Store;
 import com.homedepot.pip.data.store.flags.Stores;
+import com.homedepot.pip.util.constant.Constants;
+import com.homedepot.pip.util.http.Connection;
 
 /**
  * @author KXP8101
@@ -22,37 +26,63 @@ import com.homedepot.pip.data.store.flags.Stores;
 
 @Component
 public class StoreCache {
+	
+	@Autowired
+	private Connection connection;
 
 	private static Map<String, Store> STORE_CHACHE = new HashMap<>();
 	private static Map<String, String> STORE_OVERLAY_CACHE = new HashMap<>();
 
-	public static void populateStores(String storesXmlResponse) throws Exception {
-		Stores stores = parseStoresXmlResponse(storesXmlResponse);
-		for (Store store : stores.getStores()) {
-			putStoreIntoCache(store);
+	private void populateStores() {
+		String storesXmlResponse = getStoresResponse();
+		if (storesXmlResponse == null) {
+			return;
 		}
+		Stores stores;
+		try {
+			stores = parseStoresXmlResponse(storesXmlResponse);
+			for (Store store : stores.getStores()) {
+				putStoreIntoCache(store);
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+	}
+	
+	private String getStoresResponse() {
+		String storesResponse = null;
+		try {
+			if (Constants.IS_SIMULATOR_ENABLED) {
+				storesResponse = readStoresFromFile();
+			} else {
+				storesResponse = connection.makeRequest(
+						"http://origin.api.homedepot.com/wcs/resources/LoadStoreInfo/StoreInfoService/loadStoreInfo");
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		return storesResponse;
 	}
 
 	/**
 	 * Parse Store Info Xml response.
-	 * 
-	 * @param storesXmlResponse
-	 * @return
-	 * @throws JAXBException
 	 */
-	private static Stores parseStoresXmlResponse(String storesXmlResponse) throws Exception {
+	private Stores parseStoresXmlResponse(String storesXmlResponse) throws Exception {
 		return BeansConfig.getXmlMapper().readValue(storesXmlResponse, Stores.class);
 	}
 
 	public boolean checkStoreInCache(String storeId) {
+		if (STORE_CHACHE.size() == 0) {
+			populateStores();
+		}
 		return STORE_CHACHE.containsKey(storeId);
 	}
 
-	private static Store getStoreFromCache(String storeId) {
+	private Store getStoreFromCache(String storeId) {
 		return STORE_CHACHE.get(storeId);
 	}
 
-	private static void putStoreIntoCache(Store store) {
+	private void putStoreIntoCache(Store store) {
 		STORE_CHACHE.put(store.getStoreId(), store);
 	}
 
@@ -136,19 +166,33 @@ public class StoreCache {
 		putStoreIntoCache(store);
 	}
 	
-	public static boolean checkOverlayStoreInCache(String itemId, String storeId) {
+	public boolean checkOverlayStoreInCache(String itemId, String storeId) {
 		return STORE_OVERLAY_CACHE.containsKey(getKey(itemId, storeId));
 	}
 	
-	public static String getOverlayStoreFromCache(String itemId, String storeId) {
+	public String getOverlayStoreFromCache(String itemId, String storeId) {
 		return STORE_OVERLAY_CACHE.get(getKey(itemId, storeId));
 	}
 	
-	public static void putOverlayStoreIntoCache(String itemId, String storeId, String value) {
+	public void putOverlayStoreIntoCache(String itemId, String storeId, String value) {
 		STORE_OVERLAY_CACHE.put(getKey(itemId, storeId), value);
 	}
 	
-	private static String getKey(String itemId, String storeId) {
+	private String getKey(String itemId, String storeId) {
 		return itemId + "-" + storeId;
+	}
+
+	private static String readStoresFromFile() throws Exception {
+		long start = System.currentTimeMillis();
+		BufferedReader br = new BufferedReader(new FileReader(new File("src/main/resources/sample/Stores.xml")));
+		String line;
+		StringBuilder storesBuilder = new StringBuilder();
+
+		while ((line = br.readLine()) != null) {
+			storesBuilder.append(line.trim());
+		}
+		br.close();
+		System.out.println("Total time taken to read Stores xml file: " + (System.currentTimeMillis() - start));
+		return storesBuilder.toString();
 	}
 }

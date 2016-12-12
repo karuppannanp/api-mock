@@ -33,6 +33,9 @@ public class ApiSkuController {
 	private StubbedProductData stubbedProductData;
 	
 	@Autowired
+	private StoreCache storeCache;
+	
+	@Autowired
 	private ModifyProductData modifyProductData;
 	
 	@Autowired
@@ -146,7 +149,7 @@ public class ApiSkuController {
 			return "<error>Input parameters are not valid</error>";
 		}
 
-		if (!requestValidator.isItemInCache(itemId) || !StoreCache.checkOverlayStoreInCache(itemId, localStoreId)) {
+		if (!requestValidator.isItemInCache(itemId) || !storeCache.checkOverlayStoreInCache(itemId, localStoreId)) {
 			if (Constants.IS_PROXY_ENABLED) {
 				response = proxyService.storeFulfillmentService(itemId, localStoreId, keyword, key);
 				if (StringUtils.isNotBlank(callback)) {

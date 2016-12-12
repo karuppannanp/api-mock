@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.homedepot.pip.backend.store.fulfillment.AlternateStores;
@@ -28,13 +29,19 @@ import com.homedepot.pip.util.http.Connection;
 
 @Component
 public class StubbedStoreFiulfillment {
+	
+	@Autowired
+	private Connection connection;
+	
+	@Autowired
+	private StoreCache storeCache;
 
 	public String getStoreFulfillment(String itemId, String storeId) throws Exception {
 		return BeansConfig.getObjectMapper().writeValueAsString(storeFulfillmentResponse(itemId, storeId));
 	}
 
 	private StoreFulfillment storeFulfillmentResponse(String itemId, String storeId) throws Exception {
-		String cacheValue = StoreCache.getOverlayStoreFromCache(itemId, storeId);
+		String cacheValue = storeCache.getOverlayStoreFromCache(itemId, storeId);
 		String[] storesParam = cacheValue.split("~~~~");
 		String primary = null;
 		String nearby = null;
@@ -267,10 +274,10 @@ public class StubbedStoreFiulfillment {
 		buyOnlinePickupInStore.setAlphaPromptMessage("Not available online.Please visit store to Purchase.");
 	}
 
-	private static String makeStoreSearchCall(String searchVal) throws Exception {
+	private String makeStoreSearchCall(String searchVal) throws Exception {
 		String storeSearchServicesUrl = "http://origin.api.homedepot.com/StoreSearchServices/v2/storesearch?radius=50&address="
 				+ searchVal + "&type=json&pagesize=40";
-		return Connection.INSTANCE.makeRequest(storeSearchServicesUrl);
+		return connection.makeRequest(storeSearchServicesUrl);
 	}
 
 	private StoreSearchResponse getStoresBySearch(String searchVal) throws Exception {
@@ -285,7 +292,7 @@ public class StubbedStoreFiulfillment {
 		return (StringUtils.contains(value, "boss"));
 	}
 	
-	private static void setMedia(Sku sku) {
+	private void setMedia(Sku sku) {
 		MediaEntry mediaEntry = new MediaEntry();
 		mediaEntry.setLocation("http://www.homedepot.com/catalog/productImages/65/6d/6d15344a-3508-4a73-aa02-e71b69ecd12e_65.jpg");
 		mediaEntry.setMediaType("IMAGE");
