@@ -29,15 +29,18 @@ import com.homedepot.pip.util.http.Connection;
 
 @Component
 public class StubbedStoreFiulfillment {
-	
+
 	@Autowired
 	private Connection connection;
-	
+
 	@Autowired
 	private StoreCache storeCache;
 
+	@Autowired
+	private BeansConfig beansConfig;
+
 	public String getStoreFulfillment(String itemId, String storeId) throws Exception {
-		return BeansConfig.getObjectMapper().writeValueAsString(storeFulfillmentResponse(itemId, storeId));
+		return beansConfig.getObjectMapper().writeValueAsString(storeFulfillmentResponse(itemId, storeId));
 	}
 
 	private StoreFulfillment storeFulfillmentResponse(String itemId, String storeId) throws Exception {
@@ -90,7 +93,7 @@ public class StubbedStoreFiulfillment {
 		List<Store> storesFiltered = new ArrayList<>();
 		for (int count = 0; count < options.length; count++) {
 			String option = options[count];
-			Store store = stores.get(count+1);
+			Store store = stores.get(count + 1);
 			FulfillmentOptions fulfillmentOptions = null;
 			if (option != null) {
 				if (option.startsWith("bopis")) {
@@ -281,25 +284,26 @@ public class StubbedStoreFiulfillment {
 	}
 
 	private StoreSearchResponse getStoresBySearch(String searchVal) throws Exception {
-		return BeansConfig.getObjectMapper().readValue(makeStoreSearchCall(searchVal), StoreSearchResponse.class);
+		return beansConfig.getObjectMapper().readValue(makeStoreSearchCall(searchVal), StoreSearchResponse.class);
 	}
-	
+
 	private boolean checkBopisEligibility(String value) {
 		return (StringUtils.contains(value, "bopis"));
 	}
-	
+
 	private boolean checkBossEligibility(String value) {
 		return (StringUtils.contains(value, "boss"));
 	}
-	
+
 	private void setMedia(Sku sku) {
 		MediaEntry mediaEntry = new MediaEntry();
-		mediaEntry.setLocation("http://www.homedepot.com/catalog/productImages/65/6d/6d15344a-3508-4a73-aa02-e71b69ecd12e_65.jpg");
+		mediaEntry.setLocation(
+				"http://www.homedepot.com/catalog/productImages/65/6d/6d15344a-3508-4a73-aa02-e71b69ecd12e_65.jpg");
 		mediaEntry.setMediaType("IMAGE");
-		
+
 		Media media = new Media();
 		media.setMediaEntry(mediaEntry);
-		
+
 		sku.setMedia(media);
 	}
 }

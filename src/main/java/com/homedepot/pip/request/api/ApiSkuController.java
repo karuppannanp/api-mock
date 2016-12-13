@@ -53,6 +53,9 @@ public class ApiSkuController {
 	@Autowired
 	private AisleBayCache aisleBayCache;
 
+	@Autowired
+	private BeansConfig beansConfig;
+
 	@RequestMapping("test")
 	public String index() {
 		System.out.println("heyyyyyyyyyyyyyyy");
@@ -89,7 +92,7 @@ public class ApiSkuController {
 				products = stubbedProductData.createProducts(itemId, storeId);
 			}
 			try {
-				return BeansConfig.getXmlMapper().writeValueAsString(products);
+				return beansConfig.getXmlMapper().writeValueAsString(products);
 			} catch (Exception exception) {
 				System.out.println(exception);
 				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

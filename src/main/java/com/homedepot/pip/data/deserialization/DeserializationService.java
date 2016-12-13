@@ -20,9 +20,12 @@ public class DeserializationService {
 	@Autowired
 	private ProxyService proxyService;
 
+	@Autowired
+	private BeansConfig beansConfig;
+
 	public Products skuService(String itemId, String storeId, String key, String additionalAttributeGrp, String show)
 			throws Exception {
 		String productsString = proxyService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
-		return BeansConfig.getXmlMapper().readValue(productsString, Products.class);
+		return beansConfig.getXmlMapper().readValue(productsString, Products.class);
 	}
 }

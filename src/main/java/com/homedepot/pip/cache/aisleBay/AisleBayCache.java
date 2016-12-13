@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +24,10 @@ import com.homedepot.pip.input.StoreSkuAisle;
  */
 @Component
 public class AisleBayCache {
+	
+	@Autowired
+	private BeansConfig beansConfig;
+
 	private static Map<String, AisleBayInfo> AISLE_BAY_CHACHE = new HashMap<>();
 	
 	public void putAisleBayIntoCache(String storeSkuId, String storeId, AisleBayInfo aisleBayInfo) {
@@ -49,7 +54,7 @@ public class AisleBayCache {
 	public String getAisleBayJson(String storeId, String storeSkuId) throws JsonProcessingException {
 		AisleBayInfo aisleBayInfo = getAisleBayFromCache(storeId, storeSkuId);
 		if (aisleBayInfo != null) {
-			return BeansConfig.getObjectMapper().writeValueAsString(aisleBayInfo);
+			return beansConfig.getObjectMapper().writeValueAsString(aisleBayInfo);
 		}
 		return null;
 	}
