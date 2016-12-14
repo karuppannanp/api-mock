@@ -9,7 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import com.homedepot.pip.exception.BadRequestException;
+import com.homedepot.pip.exception.ProductNotFoundException;
 
 @Component
 public class Connection {
@@ -39,10 +43,25 @@ public class Connection {
 	}
 
 	public String makeRequest(String url) throws Exception {
-		ResponseEntity<String> re = restTemplate.getForEntity(url, String.class);
-		if (re.getStatusCode() != HttpStatus.OK) {
-			throw new Exception("StatusCode: " + re.getStatusCode() + " getRequest() failed for url: " + url);
+		ResponseEntity<String> responseEntity = null;
+		try {
+			responseEntity = restTemplate.getForEntity(url, String.class);
+			if (responseEntity.getStatusCode() != HttpStatus.OK) {
+				if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
+					throw new ProductNotFoundException(responseEntity.getStatusCodeValue(), "Failed url: " + url);
+				} else if (responseEntity.getStatusCode() == HttpStatus.BAD_REQUEST) {
+					throw new BadRequestException(responseEntity.getStatusCodeValue(), "Failed url: " + url);
+				}
+				throw new Exception("StatusCode: " + responseEntity.getStatusCode() + " Failed url: " + url);
+			}
+			return responseEntity.getBody();
+		} catch (HttpClientErrorException hcee) {
+			if (hcee.getStatusCode() == HttpStatus.NOT_FOUND) {
+				throw new ProductNotFoundException(hcee.getRawStatusCode(), "Failed url: " + url);
+			} else if (hcee.getStatusCode() == HttpStatus.BAD_REQUEST) {
+				throw new BadRequestException(hcee.getRawStatusCode(), "Failed url: " + url);
+			}
+			throw new Exception("StatusCode: " + hcee.getRawStatusCode() + " Failed url: " + url);
 		}
-		return re.getBody();
 	}
 }

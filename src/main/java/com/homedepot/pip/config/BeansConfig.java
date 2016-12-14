@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.homedepot.pip.util.constant.Constants;
 
 @Configuration
 public class BeansConfig {
@@ -31,5 +32,15 @@ public class BeansConfig {
 		xmlMapper.setSerializationInclusion(Include.NON_NULL);
 		xmlMapper.setSerializationInclusion(Include.NON_EMPTY);
 		return xmlMapper;
+	}
+
+	@Bean
+	public String getOnPremApiBaseUrl() {
+		return "http://" + Constants.ENV_DEPENEDENT_API_HOST + ":80";
+	}
+	
+	@Bean
+	public String getGcpApiBaseUrl() {
+		return "https://" + Constants.ENV_DEPENEDENT_GCP_API_HOST + ":443";
 	}
 }

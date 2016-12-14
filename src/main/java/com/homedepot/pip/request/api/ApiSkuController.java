@@ -21,6 +21,8 @@ import com.homedepot.pip.data.overlay.StubbedStoreFiulfillment;
 import com.homedepot.pip.data.proxy.ProxyService;
 import com.homedepot.pip.data.sku.ModifyProductData;
 import com.homedepot.pip.data.sku.StubbedProductData;
+import com.homedepot.pip.exception.BadRequestException;
+import com.homedepot.pip.exception.ProductNotFoundException;
 import com.homedepot.pip.input.ItemInput;
 import com.homedepot.pip.request.validator.RequestValidator;
 import com.homedepot.pip.util.constant.Constants;
@@ -75,29 +77,37 @@ public class ApiSkuController {
 			return "<error>Input parameters are not valid</error>";
 		}
 
-		if (!requestValidator.isItemInCache(itemId)) {
-			if (Constants.IS_PROXY_ENABLED) {
-				return proxyService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
+		try {
+			if (!requestValidator.isItemInCache(itemId)) {
+				if (Constants.IS_PROXY_ENABLED) {
+					return proxyService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
+				} else {
+					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return "<error>Product Not Found</error>";
+				}
 			} else {
-				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return "<error>Product Not Found</error>";
+				ItemInput itemInput = ItemCache.getItemFromCache(itemId);
+				Products products = null;
+				if (itemInput.isModifyRealData() && Constants.IS_PROXY_ENABLED) {
+					products = deserializationService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
+					products = modifyProductData.modifyProductsFromItemCache(itemInput, products);
+				} else {
+					products = stubbedProductData.createProducts(itemId, storeId);
+				}
+				try {
+					return beansConfig.getXmlMapper().writeValueAsString(products);
+				} catch (Exception exception) {
+					System.out.println(exception);
+					res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					return "<error>Some error occurred. Please try again</error>";
+				}
 			}
-		} else {
-			ItemInput itemInput = ItemCache.getItemFromCache(itemId);
-			Products products = null;
-			if (itemInput.isModifyRealData() && Constants.IS_PROXY_ENABLED) {
-				products = deserializationService.skuService(itemId, storeId, key, additionalAttributeGrp, show);
-				products = modifyProductData.modifyProductsFromItemCache(itemInput, products);
-			} else {
-				products = stubbedProductData.createProducts(itemId, storeId);
-			}
-			try {
-				return beansConfig.getXmlMapper().writeValueAsString(products);
-			} catch (Exception exception) {
-				System.out.println(exception);
-				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				return "<error>Some error occurred. Please try again</error>";
-			}
+		} catch (ProductNotFoundException pnfe) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return "<error>Product Not Found</error>";
+		} catch (BadRequestException bre) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "<error>Input parameters are not valid</error>";
 		}
 	}
 
@@ -111,27 +121,35 @@ public class ApiSkuController {
 		System.out.println("aisleBay");
 		String response = "";
 
-		if (!"tRXWvUBGuAwEzFHScjLw9ktZ0Bw7a335".equals(key) || !requestValidator.isStoreSkuIdValid(storeSkuId)
-				|| !requestValidator.isStoreIdValid(storeId)) {
-			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return "<error>Input parameters are not valid</error>";
-		}
+		try {
+			if (!"tRXWvUBGuAwEzFHScjLw9ktZ0Bw7a335".equals(key) || !requestValidator.isStoreSkuIdValid(storeSkuId)
+					|| !requestValidator.isStoreIdValid(storeId)) {
+				res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				return "<error>Input parameters are not valid</error>";
+			}
 
-		if (!aisleBayCache.checkAisleBayInCache(storeSkuId, storeId)) {
-			if (Constants.IS_PROXY_ENABLED) {
-				response = proxyService.aisleBayService(storeSkuId, storeId, key);
+			if (!aisleBayCache.checkAisleBayInCache(storeSkuId, storeId)) {
+				if (Constants.IS_PROXY_ENABLED) {
+					response = proxyService.aisleBayService(storeSkuId, storeId, key);
+					if (StringUtils.isNotBlank(callback)) {
+						response = callback + "(" + response + ")";
+					}
+				} else {
+					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					response = "{\"error\":\"Sku or sku-storeId combination not found\"}";
+				}
+			} else {
+				response = aisleBayCache.getAisleBayJson(storeId, storeSkuId);
 				if (StringUtils.isNotBlank(callback)) {
 					response = callback + "(" + response + ")";
 				}
-			} else {
-				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				response = "{\"error\":\"Sku or sku-storeId combination not found\"}";
 			}
-		} else {
-			response = aisleBayCache.getAisleBayJson(storeId, storeSkuId);
-			if (StringUtils.isNotBlank(callback)) {
-				response = callback + "(" + response + ")";
-			}
+		} catch (ProductNotFoundException pnfe) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return "<error>Product Not Found</error>";
+		} catch (BadRequestException bre) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "<error>Input parameters are not valid</error>";
 		}
 		return response;
 	}
@@ -146,27 +164,35 @@ public class ApiSkuController {
 
 		System.out.println("products/sku/{itemId}/storefulfillment");
 		String response = "";
-		
+
 		if (!"tRXWvUBGuAwEzFHScjLw9ktZ0Bw7a335".equals(key)) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return "<error>Input parameters are not valid</error>";
 		}
 
-		if (!requestValidator.isItemInCache(itemId) || !storeCache.checkOverlayStoreInCache(itemId, localStoreId)) {
-			if (Constants.IS_PROXY_ENABLED) {
-				response = proxyService.storeFulfillmentService(itemId, localStoreId, keyword, key);
+		try {
+			if (!requestValidator.isItemInCache(itemId) || !storeCache.checkOverlayStoreInCache(itemId, localStoreId)) {
+				if (Constants.IS_PROXY_ENABLED) {
+					response = proxyService.storeFulfillmentService(itemId, localStoreId, keyword, key);
+					if (StringUtils.isNotBlank(callback)) {
+						response = callback + "(" + response + ")";
+					}
+				} else {
+					res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					response = "{\"error\":\"Item Id or itemId-storeId combination not found\"}";
+				}
+			} else {
+				response = stubbedStoreFiulfillment.getStoreFulfillment(itemId, localStoreId);
 				if (StringUtils.isNotBlank(callback)) {
 					response = callback + "(" + response + ")";
 				}
-			} else {
-				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				response = "{\"error\":\"Item Id or itemId-storeId combination not found\"}";
 			}
-		} else {
-			response = stubbedStoreFiulfillment.getStoreFulfillment(itemId, localStoreId);
-			if (StringUtils.isNotBlank(callback)) {
-				response = callback + "(" + response + ")";
-			}
+		} catch (ProductNotFoundException pnfe) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return "<error>Product Not Found</error>";
+		} catch (BadRequestException bre) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "<error>Input parameters are not valid</error>";
 		}
 		return response;
 	}
@@ -181,6 +207,14 @@ public class ApiSkuController {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return "<error>Input parameters are not valid</error>";
 		}
-		return proxyService.metadataService(productId, key);
+		try {
+			return proxyService.metadataService(productId, key);
+		} catch (ProductNotFoundException pnfe) {
+			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return "<error>Product Not Found</error>";
+		} catch (BadRequestException bre) {
+			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			return "<error>Input parameters are not valid</error>";
+		}
 	}
 }
