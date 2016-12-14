@@ -35,12 +35,12 @@ public class BeansConfig {
 	}
 
 	@Bean
-	public String getOnPremApiBaseUrl() {
+	public String getOnPremApiHost() {
 		return "http://" + Constants.ENV_DEPENEDENT_API_HOST + ":80";
 	}
 	
 	@Bean
-	public String getGcpApiBaseUrl() {
+	public String getGcpApiHost() {
 		return "https://" + Constants.ENV_DEPENEDENT_GCP_API_HOST + ":443";
 	}
 }
