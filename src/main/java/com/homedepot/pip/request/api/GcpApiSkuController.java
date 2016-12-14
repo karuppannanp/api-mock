@@ -21,13 +21,14 @@ public class GcpApiSkuController {
 	
 	private final String ERROR_JSON = "{\"error\":\"Input parameters are not valid\"}";
 	
-	private final String NOT_FOUND_JSON = "{\"error\":\"Product Not Found\"}";
-
 	@Autowired
 	private RequestValidator requestValidator;
 	
 	@Autowired
 	private ProxyService proxyService;
+	
+	@Autowired
+	private ControllerHelper controllerHelper;
 
 	@RequestMapping(value = "irg/v1", params = "itemId", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public String getParentIrg(HttpServletResponse res,
@@ -47,14 +48,14 @@ public class GcpApiSkuController {
 				return proxyService.parentIrgService(itemId, storeId, irgCount, key);
 			} else {
 				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return NOT_FOUND_JSON;
+				return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 			}
 		} catch (ProductNotFoundException pnfe) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return "<error>Product Not Found</error>";
+			return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 		} catch (BadRequestException bre) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return "<error>Input parameters are not valid</error>";
+			return ERROR_JSON;
 		}
 	}
 
@@ -75,14 +76,14 @@ public class GcpApiSkuController {
 				return proxyService.childIrgService(irgIds, storeId, key);
 			} else {
 				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return NOT_FOUND_JSON;
+				return controllerHelper.getGcpApiProductNotFoundJson(irgIds);
 			}
 		} catch (ProductNotFoundException pnfe) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return "<error>Product Not Found</error>";
+			return controllerHelper.getGcpApiProductNotFoundJson(irgIds);
 		} catch (BadRequestException bre) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return "<error>Input parameters are not valid</error>";
+			return ERROR_JSON;
 		}
 	}
 
@@ -103,14 +104,14 @@ public class GcpApiSkuController {
 				return proxyService.fbtService(itemId, storeId, key);
 			} else {
 				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return NOT_FOUND_JSON;
+				return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 			}
 		} catch (ProductNotFoundException pnfe) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return "<error>Product Not Found</error>";
+			return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 		} catch (BadRequestException bre) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return "<error>Input parameters are not valid</error>";
+			return ERROR_JSON;
 		}
 	}
 
@@ -131,14 +132,14 @@ public class GcpApiSkuController {
 				return proxyService.fbrService(itemId, storeId, key);
 			} else {
 				res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-				return NOT_FOUND_JSON;
+				return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 			}
 		} catch (ProductNotFoundException pnfe) {
 			res.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			return "<error>Product Not Found</error>";
+			return controllerHelper.getGcpApiProductNotFoundJson(itemId);
 		} catch (BadRequestException bre) {
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return "<error>Input parameters are not valid</error>";
+			return ERROR_JSON;
 		}
 	}
 }
