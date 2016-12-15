@@ -5,6 +5,9 @@
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+    <%@ include file="styles.jsp" %>
+    
     <script type="text/javascript">
     function doAjax(elementId) {
     	var queryParams = formQueryParams(elementId);
@@ -120,21 +123,26 @@
     </script>
 </head>
 <body>
-	<div>
-		<%@ include file="sku.jsp" %><br><br>
-		<%@ include file="info.jsp" %><br><br>
-		<%@ include file="itemAvailability.jsp" %><br><br>
-		<%@ include file="media.jsp" %><br><br>
-		<%@ include file="fulfillment.jsp" %><br><br>
-		<%@ include file="price.jsp" %><br><br>
-		<%@ include file="inventory.jsp" %><br><br>
-		<%@ include file="promotion.jsp" %><br><br>
-		<%@ include file="attribute.jsp" %><br><br>
-		<%@ include file="shipping.jsp" %><br><br>
-		<%@ include file="rating.jsp" %><br><br>
-		<%@ include file="rebate.jsp" %><br><br>
-		<%@ include file="aisleBay.jsp" %><br><br>
-		<%@ include file="inventoryOverlay.jsp" %><br><br>
+	<div class="sku">
+		<%@ include file="sku.jsp" %>
+	</div>
+	<div class="item-info">
+		<div class="left-menu"></div>
+		<div class="input-forms">
+			<%@ include file="info.jsp" %><br><br>
+			<%@ include file="itemAvailability.jsp" %><br><br>
+			<%@ include file="media.jsp" %><br><br>
+			<%@ include file="fulfillment.jsp" %><br><br>
+			<%@ include file="price.jsp" %><br><br>
+			<%@ include file="inventory.jsp" %><br><br>
+			<%@ include file="promotion.jsp" %><br><br>
+			<%@ include file="attribute.jsp" %><br><br>
+			<%@ include file="shipping.jsp" %><br><br>
+			<%@ include file="rating.jsp" %><br><br>
+			<%@ include file="rebate.jsp" %><br><br>
+			<%@ include file="aisleBay.jsp" %><br><br>
+			<%@ include file="inventoryOverlay.jsp" %><br><br>
+		</div>
 	</div>
 </body>
 </html>

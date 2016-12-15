@@ -4,26 +4,25 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.homedepot.pip.exception.BadRequestException;
 import com.homedepot.pip.exception.ProductNotFoundException;
 
-@Component
+@Configuration
 public class Connection {
 
-	private RestTemplate restTemplate;
-	private PoolingHttpClientConnectionManager connectionManager;
+	@Bean
+	public RestTemplate getRestTemplate() {
 
-	private Connection() {
-
-		connectionManager = new PoolingHttpClientConnectionManager();
+		PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
 		RequestConfig config = RequestConfig.custom().setSocketTimeout(5000).setConnectTimeout(5000).build();
 
 		HttpClient defaultHttpClient = HttpClientBuilder.create().setDefaultRequestConfig(config)
@@ -34,18 +33,13 @@ public class Connection {
 		ClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(
 				defaultHttpClient);
 
-		restTemplate = new RestTemplate(clientHttpRequestFactory);
-	}
-
-	@Deprecated
-	public void shutdown() {
-		connectionManager.shutdown();
+		return new RestTemplate(clientHttpRequestFactory);
 	}
 
 	public String makeRequest(String url) throws Exception {
 		ResponseEntity<String> responseEntity = null;
 		try {
-			responseEntity = restTemplate.getForEntity(url, String.class);
+			responseEntity = getRestTemplate().getForEntity(url, String.class);
 			if (responseEntity.getStatusCode() != HttpStatus.OK) {
 				if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) {
 					throw new ProductNotFoundException(responseEntity.getStatusCodeValue(), "Failed url: " + url);

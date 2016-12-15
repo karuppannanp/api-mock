@@ -58,12 +58,6 @@ public class ApiSkuController {
 	@Autowired
 	private BeansConfig beansConfig;
 
-	@RequestMapping("test")
-	public String index() {
-		System.out.println("heyyyyyyyyyyyyyyy");
-		return "index";
-	}
-
 	@RequestMapping(value = "products/sku", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
 	public String getSku(HttpServletResponse res,
 			@RequestParam(value = "itemId") String itemId,

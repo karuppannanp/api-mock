@@ -22,7 +22,7 @@ public class UiController {
 			throws Exception {
 		mav.addObject("guidToNameMappings", AttributeGroupMappings.getGuidToNameMappings());
 		mav.addObject("attributeGroupNames", AttributeGroupMappings.getAttributeGroupNames());
-		mav.setViewName("create/data");
+		mav.setViewName("create/item");
 		return mav;
 	}
 }
