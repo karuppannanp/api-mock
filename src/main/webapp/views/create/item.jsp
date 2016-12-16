@@ -24,7 +24,8 @@
     }
     
     function formQueryParams(elementId) {
-    	var queryParams = "";
+    	var queryParams = appendItemId(elementId);
+    	console.log("queryParams" + queryParams);
     	var selector = elementId + " input, " + elementId + " select";
     	console.log("selector" + selector);
     	$(selector).each(function(index) {
@@ -38,6 +39,15 @@
     	});
 		console.log("queryParams:" + queryParams);
     	return queryParams;
+    }
+    
+    function appendItemId(elementId) {
+    	console.log("New test elementId: " + elementId)
+    	if ("#sku-create" !== elementId && $('#sku-create #itemId').length > 0) {
+    		return "itemId=" + $('#sku-create #itemId').val();
+    	} else {
+    		return "";
+    	}
     }
     
     function initEventListeners() {
@@ -115,6 +125,10 @@
 	    	e.preventDefault();
 	    	doAjax("#attribute-group-delete");
 	    });
+	    
+	    $('.left-menu > div').each(function(index) {
+	    	//alert($(this).html());
+		});
     }
     
     $(function () {
@@ -123,12 +137,27 @@
     </script>
 </head>
 <body>
-	<div class="sku">
+	<div class="sku border">
 		<%@ include file="sku.jsp" %>
 	</div>
 	<div class="item-info">
-		<div class="left-menu"></div>
-		<div class="input-forms">
+		<div class="left-menu border">
+			<div id="info">Info</div>
+			<div id="itemAvailability">Item Availability</div>
+			<div id="media">Media</div>
+			<div id="fulfillment">Fulfillment</div>
+			<div id="price">Price</div>
+			<div id="inventory">Inventory</div>
+			<div id="promotion">Promotion</div>
+			<div id="attribute">Attributes</div>
+			<div id="shipping">Shipping</div>
+			<div id="rating">Rating</div>
+			<div id="rebate">Rebate</div>
+			<div id="aisleBay">Aisle &amp; Bay</div>
+			<div id="overlay">Overlay</div>
+		</div>
+
+		<div class="input-forms border">
 			<%@ include file="info.jsp" %><br><br>
 			<%@ include file="itemAvailability.jsp" %><br><br>
 			<%@ include file="media.jsp" %><br><br>

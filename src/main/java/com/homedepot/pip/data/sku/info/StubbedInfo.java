@@ -114,9 +114,11 @@ public class StubbedInfo {
 			itemInfo.setBrandName(info.getVendorNumber());
 		}
 
-		// store sku #
+		// savings center icon
 		if (SAVING_CENTER.containsKey(info.getSavingsCenter())) {
 			itemInfo.setSavingsCenter(info.getSavingsCenter());
+		} else if (StringUtils.equalsIgnoreCase("null", info.getSavingsCenter())) {
+			itemInfo.setSavingsCenter(null);
 		}
 
 		// ship type
@@ -168,7 +170,7 @@ public class StubbedInfo {
 		// IRG
 		if (info.getHasIrgItems() != null && info.getHasIrgItems()) {
 			itemInfo.setHasIrgItems(true);
-		}
+		} 
 		
 		// FBR
 		if (info.getHasFbrItems() != null && info.getHasFbrItems()) {

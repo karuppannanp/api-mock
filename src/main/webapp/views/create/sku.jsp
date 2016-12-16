@@ -3,7 +3,7 @@
 	<table width="100%">
 		<tr>
 			<td width="50%">
-				 <label for="itemId">Item Id:</label><input type="text" name="itemId" id="itemId">
+				 <label for="itemId">Item Id:</label><input type="text" name="itemId" id="itemId" maxlength="9">
 			</td>
 			<td>
 				 <label for="appliance">Appliance Flag:</label><select name="appliance" id="appliance">
@@ -14,7 +14,7 @@
 		</tr>
 		<tr>
 			<td>
-				<label for="storeId">Store Id:</label><input type="text" name="storeId" id="storeId">
+				<label for="storeId">Store Id:</label><input type="text" name="storeId" id="storeId" maxlength="4">
 			</td>
 			<td>
 				<label for="storeSkuId">Store SKU Id:</label><input type="text" name="storeSkuId" id="storeSkuId">
@@ -22,7 +22,7 @@
 	</tr>
 	<tr>
 		<td>
-			<label for="protectionPlanSku">Protection Plan SKU:</label><input type="text" name="protectionPlanSku" id="protectionPlanSku">
+			<label for="protectionPlanSku">Protection Plan SKU:</label><input type="text" name="protectionPlanSku" id="protectionPlanSku" maxlength="9">
 		</td>
 		<td>
 			<label for="MERCHANDISE">Item Type:</label>
@@ -44,7 +44,7 @@
 			</select>
 		</td>
 		<td>
-			<label for="parentId">Parent Id:</label><input type="text" name="parentId" id="parentId">
+			<label for="parentId">Parent Id:</label><input type="text" name="parentId" id="parentId" maxlength="9">
 	</tr>
 	</table>
 	<button>Create SKU</button>

@@ -161,7 +161,7 @@ public class ItemInput {
 		this.rebates = rebates;
 	}
 
-	public boolean isSuperSku() {
+	public Boolean isSuperSku() {
 		return superSku;
 	}
 

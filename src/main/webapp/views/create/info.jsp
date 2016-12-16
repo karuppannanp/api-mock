@@ -1,4 +1,4 @@
-<div id="info-create" data-url="/data/sku/create/info?">
+<div id="info-create" class="on" data-url="/data/sku/create/info?">
 	<table width="100%">
 		<tr>
 			<td width="50%">
@@ -58,6 +58,7 @@
 			<td>
 				Savings Center:<select name="savingsCenter" id="savingsCenter">
 	  				<option value="" selected>--Select--</option>
+	  				<option value="null">Null</option>
 	  				<option value="New Lower Prices">New Lower Prices</option>
 	  				<option value="Overstock">Overstock</option>
 	  				<option value="Special Buys">Special Buys</option>
