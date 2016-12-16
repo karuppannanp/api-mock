@@ -1,5 +1,6 @@
 <div id="rating-create" data-url="/data/sku/create/rating?">
-	<table width="100%">
+	<h3>Item Rating</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Review Rating:<input type="text" name="rating">

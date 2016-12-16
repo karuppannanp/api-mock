@@ -1,6 +1,6 @@
 <div id="sku-create" data-url="/data/sku/create?">
-
-	<table width="100%">
+	<h3>Basic Info</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				 <label for="itemId">Item Id:</label><input type="text" name="itemId" id="itemId" maxlength="9">

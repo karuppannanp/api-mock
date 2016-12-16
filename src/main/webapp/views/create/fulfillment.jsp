@@ -1,5 +1,6 @@
 <div id="fulfillment-create" data-url="/data/sku/create/fulfillment?">
-	<table width="100%">
+	<h3>Item Fulfillment</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Ship to Home Eligibility Status:<select name="sth" id="sth">

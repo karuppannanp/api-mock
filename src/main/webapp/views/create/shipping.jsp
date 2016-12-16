@@ -1,15 +1,34 @@
 <div id="shipping-create" data-url="/data/sku/create/shipping?">
-	<table width="100%">
+	<h3>Item Shipping</h3>
+	<table>
 		<tr>
-			<td width="50%">
+			<td colspan="2">
 				Ship Message Number:<select name="messageNumber" id="messageNumber">
-	  				<option value="2" selected>2 - Does not qualify for free (Merchandise)</option>
+	  				<option value="2" selected>2 - Does Not qualify for free (Merchandise)</option>
 	  				<option value="3" selected>3 - Free with $XX (Merchandise)</option>
 	  				<option value="4">4 - Free Shipping (Merchandise)</option>
 	  				<option value="5">5 - Free Appliance Delivery</option>
 	  				<option value="6">6 - Free Appliance Delivery with $XX</option>
 				</select>
 			</td>
+		</tr>
+		<tr>
+			<td width="50%">
+				Ship to Home Start Date(yyyy-MM-dd):<input type="text" name="sthStartDate" maxlength="10" size="10" placeholder="yyyy-MM-dd">
+			</td>
+			<td>
+				Ship to Home EndDate(yyyy-MM-dd):<input type="text" name="sthEndDate" maxlength="10" size="10" placeholder="yyyy-MM-dd">
+			</td>
+		</tr>
+		<tr>
+			<td>
+				BOSS Start Date(yyyy-MM-dd):<input type="text" name="bossStartDate" maxlength="10" size="10" placeholder="yyyy-MM-dd">
+			</td>
+			<td>
+				BOSS End Date(yyyy-MM-dd):<input type="text" name="bossEndDate" maxlength="10" size="10" placeholder="yyyy-MM-dd">
+			</td>
+		</tr>
+		<tr>
 			<td>
 				Dynamic Eta:<select name="dynamicEta" id="dynamicEta">
 	  				<option value="" selected>--Select--</option>
@@ -17,24 +36,6 @@
 	  				<option value="false">False</option>
 				</select>
 			</td>
-		</tr>
-		<tr>
-			<td>
-				Ship to Home Start Date(yyyy-MM-dd):<input type="text" name="sthStartDate" placeholder="yyyy-MM-dd">
-			</td>
-			<td>
-				Ship to Home EndDate(yyyy-MM-dd):<input type="text" name="sthEndDate" placeholder="yyyy-MM-dd">
-			</td>
-		</tr>
-		<tr>
-			<td>
-				BOSS Start Date(yyyy-MM-dd):<input type="text" name="bossStartDate" placeholder="yyyy-MM-dd">
-			</td>
-			<td>
-				BOSS End Date(yyyy-MM-dd):<input type="text" name="bossEndDate" placeholder="yyyy-MM-dd">
-			</td>
-		</tr>
-		<tr>
 			<td>
 				Time Left Hours:<select name="timeLeftHrs" id="timeLeftHrs">
 					<option value="" selected>--Select--</option>
@@ -53,6 +54,8 @@
 	  				<option value="12">12</option>
 	  			</select>
 			</td>
+		</tr>
+		<tr>
 			<td>
 				Time Left Minutes:<select name="timeLeftMins" id="timeLeftMins">
 	  				<option value="" selected>--Select--</option>
@@ -118,10 +121,11 @@
 	  				<option value="59">59</option>
 				</select>
 			</td>
+			<td>.</td>
 		</tr>
 		<tr>
 			<td>
-				Free shipping Threshold:<input type="text" name="threshold">
+				Free shipping Threshold:<input type="text" name="threshold" maxlength="7" size="10">
 			</td>
 			<td>
 				Excluded Ship States:<input type="text" name="excludedShipStates">

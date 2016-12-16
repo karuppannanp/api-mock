@@ -1,5 +1,6 @@
 <div id="inventory-create" data-url="/data/sku/create/inventory?">
-	<table width="100%">
+	<h3>Item Inventory</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Local Store Inventory:<input type="text" name="inventory">

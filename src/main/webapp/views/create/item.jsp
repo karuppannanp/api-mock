@@ -127,8 +127,23 @@
 	    });
 	    
 	    $('.left-menu > div').each(function(index) {
-	    	//alert($(this).html());
+			var id = $(this).attr('id');
+	    	$(document).off('module-selection' + index).on('click.module-selection' + index,'#' + id, function(e) {
+	    		e.preventDefault();
+	    		toggleMenus(id);
+	    	});
 		});
+    }
+    
+    function toggleMenus(id) {
+    	$('.left-menu div').each(function(e) {
+    		$(this).removeClass('active');
+    	});
+    	$('.left-menu #' + id).addClass('active');
+    	$('.input-forms div').each(function(e) {
+    		$(this).removeClass('on');
+    	})
+    	$('.input-forms #' + id + '-create').addClass('on');
     }
     
     $(function () {
@@ -140,10 +155,10 @@
 	<div class="sku border">
 		<%@ include file="sku.jsp" %>
 	</div>
-	<div class="item-info">
-		<div class="left-menu border">
-			<div id="info">Info</div>
-			<div id="itemAvailability">Item Availability</div>
+	<div class="item-info border">
+		<div class="left-menu">
+			<div id="info" class="active">Info</div>
+			<div id="item-availability">Item Availability</div>
 			<div id="media">Media</div>
 			<div id="fulfillment">Fulfillment</div>
 			<div id="price">Price</div>
@@ -153,24 +168,24 @@
 			<div id="shipping">Shipping</div>
 			<div id="rating">Rating</div>
 			<div id="rebate">Rebate</div>
-			<div id="aisleBay">Aisle &amp; Bay</div>
-			<div id="overlay">Overlay</div>
+			<div id="aisle-bay">Aisle &amp; Bay</div>
+			<div id="inventory-overlay">Overlay</div>
 		</div>
 
-		<div class="input-forms border">
-			<%@ include file="info.jsp" %><br><br>
-			<%@ include file="itemAvailability.jsp" %><br><br>
-			<%@ include file="media.jsp" %><br><br>
-			<%@ include file="fulfillment.jsp" %><br><br>
-			<%@ include file="price.jsp" %><br><br>
-			<%@ include file="inventory.jsp" %><br><br>
-			<%@ include file="promotion.jsp" %><br><br>
-			<%@ include file="attribute.jsp" %><br><br>
-			<%@ include file="shipping.jsp" %><br><br>
-			<%@ include file="rating.jsp" %><br><br>
-			<%@ include file="rebate.jsp" %><br><br>
-			<%@ include file="aisleBay.jsp" %><br><br>
-			<%@ include file="inventoryOverlay.jsp" %><br><br>
+		<div class="input-forms">
+			<%@ include file="info.jsp" %>
+			<%@ include file="itemAvailability.jsp" %>
+			<%@ include file="media.jsp" %>
+			<%@ include file="fulfillment.jsp" %>
+			<%@ include file="price.jsp" %>
+			<%@ include file="inventory.jsp" %>
+			<%@ include file="promotion.jsp" %>
+			<%@ include file="attribute.jsp" %>
+			<%@ include file="shipping.jsp" %>
+			<%@ include file="rating.jsp" %>
+			<%@ include file="rebate.jsp" %>
+			<%@ include file="aisleBay.jsp" %>
+			<%@ include file="inventoryOverlay.jsp" %>
 		</div>
 	</div>
 </body>

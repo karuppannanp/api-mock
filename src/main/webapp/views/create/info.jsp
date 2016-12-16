@@ -1,5 +1,6 @@
 <div id="info-create" class="on" data-url="/data/sku/create/info?">
-	<table width="100%">
+	<h3>Item Info</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				<label for="description">Product Description:</label><input type="text" name="description" id="description">
@@ -10,7 +11,7 @@
 		</tr>
 		<tr>
 			<td>
-				<label for="brandName">Brand Name:</label>Brand Name:<input type="text" name="brandName" id="brandName">
+				<label for="brandName">Brand Name:</label><input type="text" name="brandName" id="brandName">
 			</td>
 			<td>
 				<label for="label">Label:</label><input type="text" name="label" id="label">

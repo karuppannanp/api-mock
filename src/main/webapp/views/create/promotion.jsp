@@ -1,5 +1,6 @@
 <div id="promotion-create" data-url="/data/sku/create/promotion?">
-	<table width="100%">
+	<h3>Item Promotion</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Promo Code:<input type="text" name="code">

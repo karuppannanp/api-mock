@@ -1,5 +1,6 @@
 <div id="rebate-create" data-url="/data/sku/create/rebate?">
-	<table width="100%">
+	<h3>Item Reabtes</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Rebates:<select name="rebate" id="rebate">

@@ -1,5 +1,6 @@
 <div id="media-create" data-url="/data/sku/create/media?">
-<table width="100%">
+	<h3>Item Media</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Number of Videos:<input type="text" name="noOfVideos">

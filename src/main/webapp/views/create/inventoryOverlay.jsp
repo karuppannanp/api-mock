@@ -1,5 +1,6 @@
 <div id="inventory-overlay-create" data-url="/data/sku/create/overlay?">
-	<table width="100%">
+	<h3>Inventory Overlay</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Local Store Id:<input type="text" name="storeId">

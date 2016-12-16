@@ -1,5 +1,6 @@
 <div id="price-create" data-url="/data/sku/create/price?">
-	<table width="100%">
+	<h3>Item Price</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				UOM:<input type="text" name="uom">

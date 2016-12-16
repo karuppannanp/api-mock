@@ -21,11 +21,7 @@
 		</tr>
 		<tr>
 			<td>
-				Attribute Value:<select name="value" id="value">
-	  				<option value="" selected>--Select--</option>
-	  				<option value="true">True</option>
-	  				<option value="false">False</option>
-				</select>
+				Attribute Value:<input type="text" name="value" id="value">
 			</td>
 			<td>
 				Bulletted Attribute:<select name="bulleted" id="bulleted">

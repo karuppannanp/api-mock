@@ -1,5 +1,6 @@
 <div id="item-availability-create" data-url="/data/sku/create/itemAvailability?">
-	<table width="100%">
+	<h3>Item Availability</h3>
+	<table>
 		<tr>
 			<td width="50%">
 				Buyable:<select name="buyable" id="buyable">
@@ -36,7 +37,7 @@
 				</select>
 			</td>
 			<td>
-				Back Order Date(yyyy-MM-dd):<input type="text" placeholder="yyyy-MM-dd" name="backorderDate">
+				Back Order Date(yyyy-MM-dd):<input type="text" placeholder="yyyy-MM-dd" name="backorderDate" maxlength="10" size="10">
 			</td>
 		</tr>
 		<tr>
